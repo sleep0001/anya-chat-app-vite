@@ -12,7 +12,8 @@ export const useWebSocket = () => {
     const reconnectTimeoutRef = useRef<number | null>(null);
     const {
         setRoomIds,
-        setEntryRoomId
+        setEntryRoomId,
+        setShowMessage
     } = useContexts();
     const navigate = useNavigate();
 
@@ -40,8 +41,12 @@ export const useWebSocket = () => {
                     const data = JSON.parse(event.data);
                     console.log('サーバーからの応答:', data);
                     switch(data.type) {
-                        case "room_created":
+                        case "roomCreated":
                             enterRoom(data.roomId);
+                            break;
+                        case "message":
+                            reserveMessage(data.message);
+                            break;
                     }
                 };
 
@@ -113,11 +118,26 @@ export const useWebSocket = () => {
         socketRef.current?.send(JSON.stringify(msg))
     }
 
+    const chatMessage = (msg:string,roomId:string) => {
+        const message:requestMessage = {
+            type:"message",
+            roomId:roomId,
+            message:msg
+        }
+        sendMessage(message);
+    }
+
+    const reserveMessage = (msg: string) => {
+        // どこかにmsgをセットして10秒間くらい表示したい。そのあとゆっくり消したい。
+        setShowMessage(msg);
+    }
+
     return {
         connectionStatus,
         sendMessage,
         enterRoom,
-        exitRoom
+        exitRoom,
+        chatMessage
     };
 };
 
@@ -125,4 +145,4 @@ export type requestMessage =
         | { type:"create" }
         | { type:"enter"; roomId:string }
         | { type:"exit"; roomId:string }
-        | { type:"message"; roomId:string; text:string };
+        | { type:"message"; roomId:string; message:string };
