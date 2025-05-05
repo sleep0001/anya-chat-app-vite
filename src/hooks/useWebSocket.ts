@@ -13,6 +13,7 @@ export const useWebSocket = () => {
     const {
         setRoomIds,
         setEntryRoomId,
+        showMessage,
         setShowMessage
     } = useContexts();
     const navigate = useNavigate();
@@ -125,12 +126,17 @@ export const useWebSocket = () => {
             message:msg
         }
         sendMessage(message);
+        console.log(message)
     }
 
     const reserveMessage = (msg: string) => {
         // どこかにmsgをセットして10秒間くらい表示したい。そのあとゆっくり消したい。
-        setShowMessage(msg);
-    }
+        console.log(msg);
+        setShowMessage([...showMessage, msg]);
+        setTimeout(() => {
+            setShowMessage(showMessage.slice(1));
+        }, 50000);
+    };
 
     return {
         connectionStatus,

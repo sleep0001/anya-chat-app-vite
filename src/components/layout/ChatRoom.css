@@ -1,0 +1,17 @@
+/* ふわっと非表示にできる。 */
+.message-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.chat-message {
+    background-color: #fce4ec;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: opacity 0.3s ease;
+}

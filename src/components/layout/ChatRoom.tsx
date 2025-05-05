@@ -8,12 +8,13 @@ const ChatRoom = () => {
     } = useContexts();
     const { exitRoom, chatMessage } = useWebSocket();
 
+
     return (
         <div>
             <h1>チャットルーム</h1>
             <h2>部屋Id：{entryRoomId}</h2>
             <button onClick={() => exitRoom(entryRoomId)}>退出</button>
-            <p>{showMessage}</p>
+            <p className="chat-message">{showMessage}</p>
             <button onClick={() => chatMessage("テスト送信メッセージ送信", entryRoomId)} >メッセージ送信</button>
         </div>
     )
