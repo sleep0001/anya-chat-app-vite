@@ -12,9 +12,6 @@ export const useWebSocket = () => {
         setEntryRoomId
     } = useContexts();
     const navigate = useNavigate();
-    const handleEnterRoom = (roomId: string) => {
-        navigate(`/room/${roomId}`);
-    };
 
     useEffect(() => {
         let isMounted = true;
@@ -89,7 +86,17 @@ export const useWebSocket = () => {
         }
         sendMessage(message);
         setEntryRoomId(roomId);
-        handleEnterRoom(roomId);
+        navigate(`/room/${roomId}`);
+    }
+
+    const exitRoom = (roomId:string) => {
+        const message:requestMessage = {
+            type:"exit",
+            roomId:roomId
+        }
+        sendMessage(message);
+        setEntryRoomId("");
+        navigate(`/`);
     }
 
     const sendMessage = (msg: requestMessage) => {
@@ -99,6 +106,8 @@ export const useWebSocket = () => {
     return {
         connectionStatus,
         sendMessage,
+        enterRoom,
+        exitRoom
     };
 };
 

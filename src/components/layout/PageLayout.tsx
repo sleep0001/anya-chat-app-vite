@@ -6,7 +6,15 @@ const PageLayout = () => {
     return (
         <>
             <AppHeader />
-            <main style={{ minHeight: '80vh'}}>
+            <main style={{
+                minHeight: '80vh',
+                marginLeft:'auto',
+                marginRight:'auto',
+                marginTop:'20px',
+                marginBottom:'30px',
+                width:'80%'
+                }}
+            >
                 <Outlet />
             </main>
             <AppFooter />
