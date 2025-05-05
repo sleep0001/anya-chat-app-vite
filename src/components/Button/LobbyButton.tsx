@@ -9,7 +9,6 @@ const LobbyButton = () => {
         setRoomIds
     } = useContexts();
     const { sendMessage } = useWebSocket();
-    const userId = localStorage.getItem("userId");
     const createRequest: requestMessage = {
         type: "create",
     }

@@ -124,4 +124,5 @@ export const useWebSocket = () => {
 export type requestMessage =
         | { type:"create" }
         | { type:"enter"; roomId:string }
-        | { type:"exit"; roomId:string };
+        | { type:"exit"; roomId:string }
+        | { type:"message"; roomId:string; text:string };
