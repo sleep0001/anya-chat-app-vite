@@ -1,11 +1,20 @@
 // hooks/useWebSocket.ts
 import { useEffect, useRef, useState } from 'react';
+import { useContexts } from '../contexts/contexts';
+import { useNavigate } from 'react-router-dom';
 
 export const useWebSocket = () => {
     const url:string = "ws://localhost:8080/ws/game"
     const socketRef = useRef<WebSocket | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<string>('接続中...');
     const reconnectTimeoutRef = useRef<number | null>(null);
+    const {
+        setEntryRoomId
+    } = useContexts();
+    const navigate = useNavigate();
+    const handleEnterRoom = (roomId: string) => {
+        navigate(`/room/${roomId}`);
+    };
 
     useEffect(() => {
         let isMounted = true;
@@ -27,7 +36,12 @@ export const useWebSocket = () => {
 
                 socketRef.current.onmessage = (event) => {
                     if (!isMounted) return;
-                    console.log('サーバーからの応答:', event.data);
+                    const data = JSON.parse(event.data);
+                    console.log('サーバーからの応答:', data);
+                    switch(data.type) {
+                        case "room_created":
+                            enterRoom(data.roomId);
+                    }
                 };
 
                 socketRef.current.onerror = (error) => {
@@ -68,11 +82,27 @@ export const useWebSocket = () => {
         };
     }, [url]);
 
+    const enterRoom = (roomId:string) => {
+        const message:requestMessage = {
+            type:"enter",
+            roomId:roomId
+        }
+        sendMessage(message);
+        setEntryRoomId(roomId);
+        handleEnterRoom(roomId);
+    }
+
+    const sendMessage = (msg: requestMessage) => {
+        socketRef.current?.send(JSON.stringify(msg))
+    }
+
     return {
         connectionStatus,
-        sendMessage: (msg: requestMessage) => socketRef.current?.send(JSON.stringify(msg)),
+        sendMessage,
     };
 };
+
+
 export type requestMessage = 
         | { type:"create" }
         | { type:"enter"; roomId:string }
