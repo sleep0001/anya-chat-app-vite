@@ -7,10 +7,6 @@ export const useWebSocket = () => {
     const [connectionStatus, setConnectionStatus] = useState<string>('接続中...');
     const reconnectTimeoutRef = useRef<number | null>(null);
 
-    type requestMessage = {
-        type:string
-    }
-
     useEffect(() => {
         let isMounted = true;
 
@@ -77,3 +73,7 @@ export const useWebSocket = () => {
         sendMessage: (msg: requestMessage) => socketRef.current?.send(JSON.stringify(msg)),
     };
 };
+export type requestMessage = 
+        | { type:"create" }
+        | { type:"enter"; roomId:string }
+        | { type:"exit"; roomId:string };

@@ -1,0 +1,17 @@
+.header_class {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: auto; /* 高さを自動調整 */
+    padding: 0; /* 余白を削除 */
+    margin: 0; /* マージンを削除 */
+}
+
+.logo_text {
+    color: #ffffff;
+    font-size: 22px;
+}
+
+.ant-layout-header {
+    padding: 0px 15px;
+}
