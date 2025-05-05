@@ -1,10 +1,15 @@
 .header_class {
+    height: 10vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: auto; /* 高さを自動調整 */
-    padding: 0; /* 余白を削除 */
-    margin: 0; /* マージンを削除 */
+    height: auto;
+    /* 高さを自動調整 */
+    padding: 0;
+    /* 余白を削除 */
+    margin: 0;
+    /* マージンを削除 */
+    background-color: #f4b3bb;
 }
 
 .logo_text {
@@ -12,6 +17,60 @@
     font-size: 22px;
 }
 
+.logo_text:hover {
+    color: #b58d86;
+}
+
 .ant-layout-header {
     padding: 0px 15px;
+}
+
+.ant-menu,
+.ant-menu::after,
+.ant-menu-selected::after,
+.ant-menu-open::after,
+.ant-menu-focused::after,
+.ant-menu:hover::after,
+ant-menu-overflow-item,
+ant-menu-overflow-item,
+ant-menu-item,
+ant-menu-item-selected,
+ant-menu-item-only-child {
+    background-color: #b58d86;
+}
+
+.ant-menu-item::after,
+.ant-menu-item-selected::after,
+.ant-menu-item-active::after,
+.ant-menu-item-open::after,
+.ant-menu-item-focused::after,
+.ant-menu-item:hover::after {
+    border-bottom-color: #402b28 !important;
+    transform: none !important;
+}
+
+/* テキスト色（通常・ホバー・選択中）を統一 */
+.ant-menu-horizontal>.ant-menu-item,
+.ant-menu-horizontal>.ant-menu-submenu {
+    color: #ffffff;
+    /* 通常時の文字色 */
+}
+
+.ant-menu-horizontal>.ant-menu-item:hover,
+.ant-menu-horizontal>.ant-menu-submenu:hover,
+.ant-menu-horizontal>.ant-menu-item-active,
+.ant-menu-horizontal>.ant-menu-item-selected,
+.ant-menu-horizontal>.ant-menu-submenu-active,
+.ant-menu-horizontal>.ant-menu-submenu-selected {
+    color: #402b28 !important;
+    /* ホバー・選択時の文字色 */
+    background-color: transparent !important;
+    /* 背景消す（必要に応じて） */
+}
+
+/* 下線バーを完全に非表示 */
+.ant-menu-horizontal>.ant-menu-item::after,
+.ant-menu-horizontal>.ant-menu-submenu::after {
+    border-bottom: none !important;
+    transform: none !important;
 }

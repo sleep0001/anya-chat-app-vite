@@ -10,8 +10,8 @@ const PageLayout = () => {
                 minHeight: '80vh',
                 marginLeft:'auto',
                 marginRight:'auto',
-                marginTop:'20px',
-                marginBottom:'30px',
+                paddingTop:'20px',
+                paddingBottom:'30px',
                 width:'80%'
                 }}
             >

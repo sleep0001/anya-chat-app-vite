@@ -27,7 +27,7 @@ const AppHeader: React.FC = () => {
                     <Link to="/" className={"logo_text"}>NYA</Link>
                 </div>
                 <Menu
-                    theme="dark"
+                    theme="light"
                     mode="horizontal"
                     defaultSelectedKeys={['1']}
                     items={menuItems}

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { RoomManager } from '../types/Types';
-import { useContexts } from '../contexts/contexts';
 
 export const fetchRooms = async(setRoomIds: (ids: string[]) => void) => {
     const url:string = "http://localhost:8080";

@@ -2,13 +2,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useContexts } from '../contexts/contexts';
 import { useNavigate } from 'react-router-dom';
+import { fetchRooms } from './Reload';
 
 export const useWebSocket = () => {
     const url:string = "ws://localhost:8080/ws/game"
+    const userId = localStorage.getItem("userId");
     const socketRef = useRef<WebSocket | null>(null);
     const [connectionStatus, setConnectionStatus] = useState<string>('接続中...');
     const reconnectTimeoutRef = useRef<number | null>(null);
     const {
+        setRoomIds,
         setEntryRoomId
     } = useContexts();
     const navigate = useNavigate();
@@ -23,7 +26,8 @@ export const useWebSocket = () => {
             }
 
             try {
-                socketRef.current = new WebSocket(url);
+                console.log(url + `?userId=${userId}`);
+                socketRef.current = new WebSocket(url + `?userId=${userId}`);
 
                 socketRef.current.onopen = () => {
                     if (!isMounted) return;
@@ -86,17 +90,23 @@ export const useWebSocket = () => {
         }
         sendMessage(message);
         setEntryRoomId(roomId);
+        // ここで入室判定して、満員ならはじく
         navigate(`/room/${roomId}`);
     }
 
     const exitRoom = (roomId:string) => {
         const message:requestMessage = {
+            // userId:userId,
             type:"exit",
             roomId:roomId
         }
         sendMessage(message);
         setEntryRoomId("");
         navigate(`/`);
+        useEffect(() => {
+            fetchRooms(setRoomIds);
+        }, [])
+        
     }
 
     const sendMessage = (msg: requestMessage) => {
@@ -111,8 +121,7 @@ export const useWebSocket = () => {
     };
 };
 
-
-export type requestMessage = 
+export type requestMessage =
         | { type:"create" }
         | { type:"enter"; roomId:string }
         | { type:"exit"; roomId:string };
