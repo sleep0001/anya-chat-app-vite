@@ -2,8 +2,6 @@ import { createContext, useContext, useState } from 'react';
 import { Message } from '../types/Types';
 
 type Contexts = {
-    isEnter: boolean;
-    setIsEnter: React.Dispatch<React.SetStateAction<boolean>>;
     roomIds: string[];
     setRoomIds: React.Dispatch<React.SetStateAction<string[]>>;
     entryRoomId: string;
@@ -15,15 +13,12 @@ type Contexts = {
 const Contexts = createContext<Contexts | undefined>(undefined);
 
 export const ContextsProvider = ({ children }: { children: React.ReactNode }) => {
-    const [isEnter, setIsEnter] = useState<boolean>(false);
     const [roomIds, setRoomIds] = useState<string[]>([]);
     const [entryRoomId, setEntryRoomId] = useState<string>("");
     const [showMessage, setShowMessage] = useState<Message[]>([]);
     return (
         <Contexts.Provider
             value={{
-                isEnter,
-                setIsEnter,
                 roomIds,
                 setRoomIds,
                 entryRoomId,
