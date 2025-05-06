@@ -1,5 +1,5 @@
-import AppHeader from './AppHeader.tsx'
-import AppFooter from './AppFooter.tsx'
+import AppHeader from '../common/AppHeader.tsx'
+import AppFooter from '../common/AppFooter.tsx'
 import { Outlet } from 'react-router-dom'
 
 const PageLayout = () => {
