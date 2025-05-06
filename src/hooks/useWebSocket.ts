@@ -4,7 +4,7 @@ import { useContexts } from '../contexts/contexts';
 import { useNavigate } from 'react-router-dom';
 import { fetchRooms } from './Reload';
 import { v4 as uuidV4 } from 'uuid';
-import { Message } from '../types/Types';
+import { Message, Room } from '../types/Types';
 import dayjs from "dayjs";
 
 export const useWebSocket = () => {
@@ -15,13 +15,14 @@ export const useWebSocket = () => {
     type response = {
         type:"roomCreated" | "message" | "enterAccepted" | "enterRejected";
         message:string;
-        roomId:string;
+        room:Room;
         timeStamp:string;
         userId:string;
+        roomName:string;
     }
     const {
-        setRoomIds,
-        setEntryRoomId,
+        setRooms,
+        setEntryRoom,
         setShowMessage
     } = useContexts();
     const navigate = useNavigate();
@@ -47,7 +48,7 @@ export const useWebSocket = () => {
                 socketRef.current.onmessage = (event) => {
                     if (!isMounted) return;
                     const data:response = JSON.parse(event.data);
-                    console.log('サーバーからの応答:', data.message);
+                    console.log('サーバーからの応答:', event);
                     processServerResponse(data);
                 };
 
@@ -90,7 +91,7 @@ export const useWebSocket = () => {
     const processServerResponse = (responseData:response) => {
         switch(responseData.type) {
             case "roomCreated":
-                enterRoom(responseData.roomId);
+                enterRoom(responseData.room);
                 break;
             case "message":
                 console.log("受信しました。")
@@ -98,7 +99,7 @@ export const useWebSocket = () => {
                 break;
             case "enterAccepted":
                 console.log("入室許可");
-                navigate(`/room/${responseData.roomId}`);
+                navigate(`/room/${responseData.room}`);
                 break;
             case "enterRejected":
                 console.log("入室拒否");
@@ -108,13 +109,14 @@ export const useWebSocket = () => {
         }
     }
 
-    const enterRoom = (roomId:string) => {
+    const enterRoom = (room:Room) => {
         const message:requestMessage = {
             type:"enter",
-            roomId:roomId
+            roomId:room.roomId,
         }
+        console.log(message);
         sendMessage(message);
-        setEntryRoomId(roomId);
+        setEntryRoom(room);
     }
 
     const exitRoom = (roomId:string) => {
@@ -124,11 +126,11 @@ export const useWebSocket = () => {
             roomId:roomId
         }
         sendMessage(message);
-        setEntryRoomId("");
+        setEntryRoom({roomId:"", roomName:""});
         setShowMessage([])
         navigate(`/`);
         useEffect(() => {
-            fetchRooms(setRoomIds);
+            fetchRooms(setRooms);
         }, [])
     }
 
@@ -170,7 +172,7 @@ export const useWebSocket = () => {
 };
 
 export type requestMessage =
-        | { type:"create" }
+        | { type:"create"; roomName:string }
         | { type:"enter"; roomId:string }
         | { type:"exit"; roomId:string }
         | { type:"message"; roomId:string; message:string };

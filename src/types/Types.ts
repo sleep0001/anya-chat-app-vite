@@ -1,11 +1,8 @@
-export type RoomManager = {
-    rooms:Room[];
-}
+export type RoomManager = Room[];
 
 export type Room = {
     roomId:string;
-    name:string;
-    sessions:string[];
+    roomName:string;
 }
 
 export type Message = {

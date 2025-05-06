@@ -7,11 +7,11 @@ import { fetchRooms } from '../../hooks/Reload';
 
 const Lobby = () => {
     const {
-        setRoomIds,
+        setRooms,
     } = useContexts();
 
     useEffect(() => {
-        fetchRooms(setRoomIds);
+        fetchRooms(setRooms);
     }, [])
 
     return (

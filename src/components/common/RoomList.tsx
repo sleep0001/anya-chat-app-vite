@@ -1,22 +1,22 @@
 import { List } from "antd";
 import { useContexts } from "../../contexts/contexts";
 import { useWebSocket } from "../../hooks/useWebSocket";
+import { Room } from "../../types/Types";
 
 const RoomList = () => {
     const {
-        roomIds
+        rooms
     } = useContexts();
     const { enterRoom } = useWebSocket();
-    console.log("更新された。" + roomIds);
 
     return (
         <List
-            style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid #eee', marginTop:'10px', backgroundColor:'#f4b3bb' }}
+            style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid #eee', marginTop: '10px', backgroundColor: '#f4b3bb' }}
             itemLayout="horizontal"
-            dataSource={roomIds.map(roomId => ({ title: roomId }))}
+            dataSource={rooms.map((room: Room) => ({ room }))}
             renderItem={(item) => (
                 <List.Item
-                    onClick={() => enterRoom(item.title)}
+                    onClick={() => enterRoom(item.room)}
                     style={{
                         padding: '16px',
                         cursor: 'pointer',
@@ -31,7 +31,7 @@ const RoomList = () => {
                 >
                     <List.Item.Meta
                         // avatar={<Avatar src={`https://...`} />}アイコンを設定できる。
-                        title={<a style={{ color: '#402b28', textDecoration: 'none' }}>{item.title}</a>}
+                        title={<a style={{ color: '#402b28', textDecoration: 'none' }}>{item.room.roomName}</a>}
                     />
                 </List.Item>
             )}

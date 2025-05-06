@@ -1,21 +1,20 @@
 import axios from 'axios';
+import { RoomManager } from '../types/Types';
 
-export const fetchRooms = async(setRoomIds: (ids: string[]) => void) => {
+export const fetchRooms = async(setRooms: (rooms: RoomManager) => void) => {
     const url:string = "http://localhost:8080";
     
 
     try {
-        const response = await axios.get<string[]>(url + "/api/reload", {
-            headers: {
-                Accept: "application/json"
-            },
-            auth: {
-                username: "user",
-                password: "password"
-            }
+        const response = await axios.get<Record<string, string>>(url + "/api/reload", {
+            headers: { Accept: "application/json" },
+            auth: { username: "user", password: "password" }
         });
-        console.log(response);
-        setRoomIds(response.data);
+        const roomArray: RoomManager = Object.entries(response.data).map(([roomId, roomName]) => ({
+            roomId,
+            roomName
+        }));
+        setRooms(roomArray);
     } catch (error) {
         console.error("Roomの取得エラーです。")
     }

@@ -6,11 +6,12 @@ import { useWebSocket } from '../../hooks/useWebSocket';
 import CutieButton from '../common/CutieButton';
 const LobbyButton = () => {
     const {
-        setRoomIds
+        setRooms
     } = useContexts();
     const { sendMessage } = useWebSocket();
     const createRequest: requestMessage = {
         type: "create",
+        roomName: "ウェスタリス",
     }
     return (
         <Space wrap>
@@ -23,7 +24,7 @@ const LobbyButton = () => {
             />
             <CutieButton
                 label="更新"
-                onClick={() => fetchRooms(setRoomIds)}
+                onClick={() => fetchRooms(setRooms)}
                 color="#ff85c0"
                 textColor="#ff85c0"
                 type="default"

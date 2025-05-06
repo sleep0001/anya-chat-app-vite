@@ -6,7 +6,7 @@ import InputChatMessage from "../common/InputChatMessage";
 
 const ChatRoom = () => {
     const {
-        entryRoomId,
+        entryRoom,
         showMessage
     } = useContexts();
     const { exitRoom, chatMessage } = useWebSocket();
@@ -14,17 +14,17 @@ const ChatRoom = () => {
     return (
         <div>
             <h1>チャットルーム</h1>
-            <h2>部屋Id：{entryRoomId}</h2>
+            <h2>ルーム名：{entryRoom.roomName}</h2>
             <CutieButton
                 label="出てくます！"
-                onClick={() => exitRoom(entryRoomId)}
+                onClick={() => exitRoom(entryRoom.roomId)}
                 color="#ff85c0"
                 textColor="#ff85c0"
                 type="default"
             />
             <CutieButton
                 label="アニャ！"
-                onClick={() => chatMessage("アニャ！", entryRoomId)}
+                onClick={() => chatMessage("アニャ！", entryRoom.roomId)}
                 color="#ff85c0"
                 textColor="#ffffff"
                 type="primary"
@@ -56,7 +56,7 @@ const ChatRoom = () => {
                     </List.Item>
                 )}
             />
-            <InputChatMessage entryRoomId={entryRoomId} />
+            <InputChatMessage entryRoomId={entryRoom.roomId} />
         </div>
     )
 }
