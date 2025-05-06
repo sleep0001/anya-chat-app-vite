@@ -74,3 +74,9 @@ ant-menu-item-only-child {
     border-bottom: none !important;
     transform: none !important;
 }
+
+.menu {
+    border-radius: 6px;
+    overflow:  hidden;
+    border: 1px solid #ccc;
+}

@@ -1,19 +1,25 @@
 // hooks/useWebSocket.ts
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useContexts } from '../contexts/contexts';
 import { useNavigate } from 'react-router-dom';
 import { fetchRooms } from './Reload';
+import { v4 as uuidV4 } from 'uuid';
+import { Message } from '../types/Types';
 
 export const useWebSocket = () => {
     const url:string = "ws://localhost:8080/ws/game"
     const userId = localStorage.getItem("userId");
     const socketRef = useRef<WebSocket | null>(null);
-    const [connectionStatus, setConnectionStatus] = useState<string>('接続中...');
     const reconnectTimeoutRef = useRef<number | null>(null);
+    type response = {
+        type:"roomCreated" | "message";
+        message:string;
+        roomId:string;
+        timeStamp:string;
+    }
     const {
         setRoomIds,
         setEntryRoomId,
-        showMessage,
         setShowMessage
     } = useContexts();
     const navigate = useNavigate();
@@ -34,33 +40,24 @@ export const useWebSocket = () => {
                 socketRef.current.onopen = () => {
                     if (!isMounted) return;
                     console.log('WebSocket接続成功');
-                    setConnectionStatus('接続済み');
                 };
 
                 socketRef.current.onmessage = (event) => {
                     if (!isMounted) return;
-                    const data = JSON.parse(event.data);
-                    console.log('サーバーからの応答:', data);
-                    switch(data.type) {
-                        case "roomCreated":
-                            enterRoom(data.roomId);
-                            break;
-                        case "message":
-                            reserveMessage(data.message);
-                            break;
-                    }
+                    const data:response = JSON.parse(event.data);
+                    console.log('サーバーからの応答:', data.message);
+                    processServerResponse(data);
                 };
 
                 socketRef.current.onerror = (error) => {
                     if (!isMounted) return;
                     console.error('WebSocket エラー:', error);
-                    setConnectionStatus('接続エラー');
                 };
 
                 socketRef.current.onclose = () => {
                     if (!isMounted) return;
                     console.log('WebSocket接続が閉じられました');
-                    setConnectionStatus('切断されました');
+                    setShowMessage([])
 
                     if (reconnectTimeoutRef.current) {
                         window.clearTimeout(reconnectTimeoutRef.current);
@@ -71,7 +68,6 @@ export const useWebSocket = () => {
             } catch (error) {
                 if (isMounted) {
                     console.error('WebSocket接続エラー:', error);
-                    setConnectionStatus('接続エラー');
                 }
             }
         };
@@ -88,6 +84,18 @@ export const useWebSocket = () => {
             }
         };
     }, [url]);
+
+    const processServerResponse = (responseData:response) => {
+        switch(responseData.type) {
+            case "roomCreated":
+                enterRoom(responseData.roomId);
+                break;
+            case "message":
+                console.log("受信しました。")
+                reserveMessage(responseData);
+                break;
+        }
+    }
 
     const enterRoom = (roomId:string) => {
         const message:requestMessage = {
@@ -108,11 +116,11 @@ export const useWebSocket = () => {
         }
         sendMessage(message);
         setEntryRoomId("");
+        setShowMessage([])
         navigate(`/`);
         useEffect(() => {
             fetchRooms(setRoomIds);
         }, [])
-        
     }
 
     const sendMessage = (msg: requestMessage) => {
@@ -126,20 +134,23 @@ export const useWebSocket = () => {
             message:msg
         }
         sendMessage(message);
-        console.log(message)
     }
 
-    const reserveMessage = (msg: string) => {
-        // どこかにmsgをセットして10秒間くらい表示したい。そのあとゆっくり消したい。
-        console.log(msg);
-        setShowMessage([...showMessage, msg]);
-        setTimeout(() => {
-            setShowMessage(showMessage.slice(1));
-        }, 50000);
+    const reserveMessage = (responseData:response) => {
+        const id:string = uuidV4();
+        const newMessage:Message = { id, text:responseData.message, timeStamp:responseData.timeStamp};
+        console.log(newMessage);
+        setShowMessage((prev) => {
+            const updated = [...prev, newMessage];
+            // 削除タイマーはここでスケジュール
+            setTimeout(() => {
+                setShowMessage((current) => current.filter((m) => m.id !== id));
+            }, 3000);
+            return updated;
+        });
     };
 
     return {
-        connectionStatus,
         sendMessage,
         enterRoom,
         exitRoom,

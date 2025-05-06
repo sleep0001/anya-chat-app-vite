@@ -18,7 +18,6 @@
         "titleBar.inactiveBackground": "#402b28",
         "titleBar.inactiveForeground": "#f4b3bb"
     },
-    "peacock.color": "#f4b3bb",
     "editor.tabSize": 4,
     "editor.insertSpaces": true
 }

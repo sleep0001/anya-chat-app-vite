@@ -1,15 +1,15 @@
 import { createContext, useContext, useState } from 'react';
-import { RoomManager, Room } from '../types/Types';
+import { Message } from '../types/Types';
 
 type Contexts = {
     isEnter: boolean;
-    setIsEnter: (value: boolean) => void;
+    setIsEnter: React.Dispatch<React.SetStateAction<boolean>>;
     roomIds: string[];
-    setRoomIds: (value: string[]) => void;
+    setRoomIds: React.Dispatch<React.SetStateAction<string[]>>;
     entryRoomId: string;
-    setEntryRoomId: (value: string) => void;
-    showMessage: string[];
-    setShowMessage: (value: string[]) => void;
+    setEntryRoomId: React.Dispatch<React.SetStateAction<string>>;
+    showMessage: Message[];
+    setShowMessage: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 
 const Contexts = createContext<Contexts | undefined>(undefined);
@@ -18,7 +18,7 @@ export const ContextsProvider = ({ children }: { children: React.ReactNode }) =>
     const [isEnter, setIsEnter] = useState<boolean>(false);
     const [roomIds, setRoomIds] = useState<string[]>([]);
     const [entryRoomId, setEntryRoomId] = useState<string>("");
-    const [showMessage, setShowMessage] = useState<string[]>([]);
+    const [showMessage, setShowMessage] = useState<Message[]>([]);
     return (
         <Contexts.Provider
             value={{

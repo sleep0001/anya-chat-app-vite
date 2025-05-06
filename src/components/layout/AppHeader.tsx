@@ -29,6 +29,7 @@ const AppHeader: React.FC = () => {
                 <Menu
                     theme="light"
                     mode="horizontal"
+                    className='menu'
                     defaultSelectedKeys={['1']}
                     items={menuItems}
                 />

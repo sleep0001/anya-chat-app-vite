@@ -25,7 +25,7 @@ const LobbyButton = () => {
                 label="更新"
                 onClick={() => fetchRooms(setRoomIds)}
                 color="#ff85c0"
-                textColor="#ffadd2"
+                textColor="#ff85c0"
                 type="default"
             />
         </Space>
