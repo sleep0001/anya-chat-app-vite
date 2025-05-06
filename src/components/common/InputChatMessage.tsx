@@ -20,22 +20,13 @@ const InputChatMessage: React.FC<Props> = ({ entryRoomId }) => {
         <div
             style={{
                 position: 'fixed',
-                bottom: '10vh',  // フッターの高さに合わせて下げる
+                bottom: 0,
                 left: 0,
                 right: 0,
                 backgroundColor: '#fff',
                 padding: '8px',
                 zIndex: 1000,
                 borderTop: '1px solid #ccc',
-                
-                // position: 'fixed',
-                // bottom: '10vh',
-                // left: 0,
-                // right: 0,
-                // padding: '8px',
-                // backgroundColor: '#fff',
-                // borderTop: '1px solid #ccc',
-                // zIndex: 1000, // 必要に応じて
             }}>
             <Space.Compact style={{ width: '100%' }}>
                 <Input
@@ -47,6 +38,7 @@ const InputChatMessage: React.FC<Props> = ({ entryRoomId }) => {
                 <Button
                     type="primary"
                     onClick={handleSend}
+                    style={{ backgroundColor:'#ff85c0' }}
                 >
                     送るます
                 </Button>
