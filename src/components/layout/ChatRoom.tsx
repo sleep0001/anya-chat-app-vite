@@ -1,6 +1,6 @@
 import { useContexts } from "../../contexts/contexts";
 import { useWebSocket } from '../../hooks/useWebSocket';
-import { List, Space, Input, Button } from "antd";
+import { List } from "antd";
 import CutieButton from "../common/CutieButton";
 import InputChatMessage from "../common/InputChatMessage";
 
@@ -32,7 +32,7 @@ const ChatRoom = () => {
             <List
                 style={{ borderRadius: '16px', overflow: 'auto', boxSizing: 'border-box', border: '1px solid #eee', marginTop: '10px', padding: '10px', marginBottom: '60px', backgroundColor: '#f4b3bb' }}
                 itemLayout="horizontal"
-                dataSource={showMessage.map(message => ({ title: message.text, description: message.timeStamp }))}
+                dataSource={showMessage.map(message => ({ title: message.text, description: message.timeStamp, isMe: message.isMe }))}
                 renderItem={(item) => (
                     <List.Item
                         style={{
@@ -51,6 +51,7 @@ const ChatRoom = () => {
                             // avatar={<Avatar src={`https://...`} />}アイコンを設定できる。
                             title={<a style={{ color: '#402b28', textDecoration: 'none' }}>{item.title}</a>}
                             description={<p>{item.description}</p>}
+                            style={ item.isMe ? {textAlign:'right'} : {}}
                         />
                     </List.Item>
                 )}

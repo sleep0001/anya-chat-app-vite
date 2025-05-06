@@ -17,6 +17,7 @@ export const useWebSocket = () => {
         message:string;
         roomId:string;
         timeStamp:string;
+        userId:string;
     }
     const {
         setRoomIds,
@@ -147,7 +148,8 @@ export const useWebSocket = () => {
     const reserveMessage = (responseData:response) => {
         const id:string = uuidV4();
         const timeStamp:string = dayjs(responseData.timeStamp.replace(/\.\d+Z$/, 'Z')).format("YYYY/MM/DD HH:mm:ss");
-        const newMessage:Message = { id, text:responseData.message, timeStamp};
+        const isMe:boolean = responseData.userId == userId;
+        const newMessage:Message = { id, text:responseData.message, timeStamp, isMe };
         console.log(newMessage);
         setShowMessage((prev) => {
             const updated = [...prev, newMessage];

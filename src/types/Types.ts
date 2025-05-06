@@ -12,4 +12,5 @@ export type Message = {
     id:string;
     text:string;
     timeStamp:string;
+    isMe:boolean;
 }
