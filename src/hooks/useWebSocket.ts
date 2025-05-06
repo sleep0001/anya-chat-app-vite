@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchRooms } from './Reload';
 import { v4 as uuidV4 } from 'uuid';
 import { Message } from '../types/Types';
+import dayjs from "dayjs";
 
 export const useWebSocket = () => {
     const url:string = "ws://localhost:8080/ws/game"
@@ -145,15 +146,16 @@ export const useWebSocket = () => {
 
     const reserveMessage = (responseData:response) => {
         const id:string = uuidV4();
-        const newMessage:Message = { id, text:responseData.message, timeStamp:responseData.timeStamp};
+        const timeStamp:string = dayjs(responseData.timeStamp.replace(/\.\d+Z$/, 'Z')).format("YYYY/MM/DD HH:mm:ss");
+        const newMessage:Message = { id, text:responseData.message, timeStamp};
         console.log(newMessage);
         setShowMessage((prev) => {
             const updated = [...prev, newMessage];
             // 削除タイマーはここでスケジュール
             setTimeout(() => {
                 setShowMessage((current) => current.filter((m) => m.id !== id));
-            }, 3000);
-            return updated;
+            }, 100000);
+            return updated.sort((a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime());
         });
     };
 

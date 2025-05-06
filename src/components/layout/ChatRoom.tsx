@@ -10,7 +10,6 @@ const ChatRoom = () => {
     } = useContexts();
     const { exitRoom, chatMessage } = useWebSocket();
 
-
     return (
         <div>
             <h1>チャットルーム</h1>
