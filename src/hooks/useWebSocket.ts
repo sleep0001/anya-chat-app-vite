@@ -12,7 +12,7 @@ export const useWebSocket = () => {
     const socketRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<number | null>(null);
     type response = {
-        type:"roomCreated" | "message";
+        type:"roomCreated" | "message" | "enterAccepted" | "enterRejected";
         message:string;
         roomId:string;
         timeStamp:string;
@@ -94,6 +94,15 @@ export const useWebSocket = () => {
                 console.log("受信しました。")
                 reserveMessage(responseData);
                 break;
+            case "enterAccepted":
+                console.log("入室許可");
+                navigate(`/room/${responseData.roomId}`);
+                break;
+            case "enterRejected":
+                console.log("入室拒否");
+                // フラッシュメッセージにしたい。
+                alert("満席ます。");
+                break;
         }
     }
 
@@ -104,8 +113,6 @@ export const useWebSocket = () => {
         }
         sendMessage(message);
         setEntryRoomId(roomId);
-        // ここで入室判定して、満員ならはじく
-        navigate(`/room/${roomId}`);
     }
 
     const exitRoom = (roomId:string) => {
