@@ -4,14 +4,16 @@ import { useContexts } from '../../contexts/contexts'
 import { requestMessage } from '../../hooks/useWebSocket';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import CutieButton from '../common/CutieButton';
+import { getMission } from '../../contents/RoomNames';
 const LobbyButton = () => {
     const {
         setRooms
     } = useContexts();
     const { sendMessage } = useWebSocket();
+    const mission:string = getMission();
     const createRequest: requestMessage = {
         type: "create",
-        roomName: "ウェスタリス",
+        roomName: mission,
     }
     return (
         <Space wrap>

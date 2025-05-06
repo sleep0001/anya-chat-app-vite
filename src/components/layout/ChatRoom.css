@@ -7,11 +7,11 @@
 }
 
 .chat-message {
-    background-color: #fce4ec;
+    background-color: #f4b3bb;
     color: #333;
     padding: 10px 20px;
     border-radius: 8px;
     margin-top: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, opacity 0.3s ease;
 }

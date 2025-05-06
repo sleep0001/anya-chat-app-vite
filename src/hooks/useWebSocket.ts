@@ -99,7 +99,7 @@ export const useWebSocket = () => {
                 break;
             case "enterAccepted":
                 console.log("入室許可");
-                navigate(`/room/${responseData.room}`);
+                navigate(`/room/${responseData.room.roomId}`);
                 break;
             case "enterRejected":
                 console.log("入室拒否");
@@ -149,7 +149,7 @@ export const useWebSocket = () => {
 
     const reserveMessage = (responseData:response) => {
         const id:string = uuidV4();
-        const timeStamp:string = dayjs(responseData.timeStamp.replace(/\.\d+Z$/, 'Z')).format("YYYY/MM/DD HH:mm:ss");
+        const timeStamp:string = dayjs(responseData.timeStamp.replace(/\.\d+Z$/, 'Z')).format("HH:mm:ss");
         const isMe:boolean = responseData.userId == userId;
         const newMessage:Message = { id, text:responseData.message, timeStamp, isMe };
         console.log(newMessage);
