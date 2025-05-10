@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 
 export const useWebSocket = () => {
     const url:string = "ws://localhost:8080/ws/game"
-    const userId = localStorage.getItem("userId");
+    let userId = localStorage.getItem("userId");
     const socketRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<number | null>(null);
     type response = {
@@ -29,11 +29,13 @@ export const useWebSocket = () => {
 
     useEffect(() => {
         let isMounted = true;
-
         const connect = () => {
             if (socketRef.current) {
                 socketRef.current.close();
                 socketRef.current = null;
+            }
+            if (userId == null) {
+                userId = localStorage.getItem("userId");
             }
 
             try {
