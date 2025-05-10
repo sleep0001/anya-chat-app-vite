@@ -8,8 +8,7 @@ import { Message, Room } from '../types/Types';
 import dayjs from "dayjs";
 
 export const useWebSocket = () => {
-    const url:string = "ws://localhost:8080/ws/game"
-    let userId = localStorage.getItem("userId");
+    const url:string = "wss://www.sl33p.net/ws/game"
     const socketRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<number | null>(null);
     type response = {
@@ -21,6 +20,8 @@ export const useWebSocket = () => {
         roomName:string;
     }
     const {
+        userId,
+        setUserId,
         setRooms,
         setEntryRoom,
         setShowMessage
@@ -34,13 +35,25 @@ export const useWebSocket = () => {
                 socketRef.current.close();
                 socketRef.current = null;
             }
-            if (userId == null) {
-                userId = localStorage.getItem("userId");
-            }
 
             try {
-                console.log(url + `?userId=${userId}`);
-                socketRef.current = new WebSocket(url + `?userId=${userId}`);
+                let finalUserId:string = userId;
+                const localStorageUserId:string = localStorage.getItem("userId") ?? "";
+                if (!userId && !localStorageUserId) {
+                    // どちらも空or未定義
+                    finalUserId = uuidV4();
+                    setUserId(finalUserId);
+                    localStorage.setItem("userId", finalUserId);
+                } else if(!userId && localStorageUserId) {
+                    // userIdが空or未定義
+                    finalUserId = localStorageUserId;
+                    setUserId(localStorageUserId);
+                } else if (userId && !localStorageUserId) {
+                    // ローカルストレージが空or未定義
+                    localStorage.setItem("userId", finalUserId);
+                }
+
+                socketRef.current = new WebSocket(url + `?userId=${finalUserId}`);
 
                 socketRef.current.onopen = () => {
                     if (!isMounted) return;
@@ -157,13 +170,25 @@ export const useWebSocket = () => {
         console.log(newMessage);
         setShowMessage((prev) => {
             const updated = [...prev, newMessage];
-            // 削除タイマーはここでスケジュール
+            console.log(updated);
+            // 削除タイマーはここでスケジュール 日付をまたぐ場合にはparseTodayTimeに考慮が必要
             setTimeout(() => {
                 setShowMessage((current) => current.filter((m) => m.id !== id));
             }, 100000);
-            return updated.sort((a, b) => new Date(b.timeStamp).getTime() - new Date(a.timeStamp).getTime());
+            const sorted = [...updated].sort((a, b) =>
+                parseTodayTime(b.timeStamp).getTime() - parseTodayTime(a.timeStamp).getTime()
+            );
+            console.log(sorted);
+            return sorted;
         });
     };
+
+    const parseTodayTime = (timeStr:string):Date => {
+        const [hours, minutes, seconds] = timeStr.split(":").map(Number);
+        const now = new Date();
+        now.setHours(hours, minutes, seconds);
+        return now;
+    }
 
     return {
         sendMessage,
