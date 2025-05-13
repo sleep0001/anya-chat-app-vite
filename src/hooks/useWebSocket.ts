@@ -144,13 +144,17 @@ export const useWebSocket = () => {
         setEntryRoom({roomId:"", roomName:""});
         setShowMessage([])
         navigate(`/`);
-        useEffect(() => {
-            fetchRooms(setRooms);
-        }, [])
+        fetchRooms(setRooms);
     }
 
     const sendMessage = (msg: requestMessage) => {
-        socketRef.current?.send(JSON.stringify(msg))
+        // 接続が開かれるのを待つ
+        socketRef.current?.addEventListener('open', () => {
+            socketRef.current?.send(JSON.stringify(msg));
+        });
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+            socketRef.current?.send(JSON.stringify(msg))
+        }
     }
 
     const chatMessage = (msg:string,roomId:string) => {
