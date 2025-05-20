@@ -15,7 +15,7 @@ const AppHeader: React.FC = () => {
             key: 'sub1',
             label: 'More',
             children: [
-
+                { key: '2', label: <Link to="/card">カード</Link> }
             ],
         },
     ];

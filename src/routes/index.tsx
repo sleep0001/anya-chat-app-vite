@@ -5,6 +5,7 @@ import PageLayout from '../components/layout/PageLayout.tsx'
 import { Layout } from 'antd';
 // import ChatRoom from '../components/layout/ChatRoom.tsx';
 import Lobby from '../components/layout/Lobby.tsx';
+import CardList from '../components/layout/CardList.tsx';
 
 // const PageLayout = lazy(() => import('../components/layout/PageLayout.tsx'));
 // const Lobby = lazy(() => import('../components/layout/Lobby.tsx'));
@@ -18,6 +19,7 @@ export default function AppRoutes() {
                     <Route path='/' element={<PageLayout />}>
                         <Route index element={<Lobby />} />
                         <Route path='/room/:roomId' element={<ChatRoom />} />
+                        <Route path='/card' element={<CardList />} />
                     </Route>
                 </Routes>
             </Layout>
