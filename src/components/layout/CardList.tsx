@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '../../types/CardType';
 import { getCards } from '../../hooks/cardAPI';
 import { List } from 'antd';
-import { formatThreeDigitString } from '../../util/utils';
+import CardComponent from '../common/CardComponent';
 
 
 const CardList = () => {
@@ -13,10 +13,10 @@ const CardList = () => {
     return (
         <div>
             <List
-            dataSource={cards.map(card => ({ expansion: card.expansion.name, num: card.number }))}
+            dataSource={cards.map(card => ({ expansion: card.expansion.name, number: card.number, card: card }))}
             renderItem={(card) => (
                 <List.Item>
-                    <img src={"https://www.onepiece-cardgame.com/images/cardlist/card/" + card.expansion + "-" + formatThreeDigitString(card.num) + ".png"}/>
+                    <CardComponent card={card.card} />
                 </List.Item>
             )}
             />
