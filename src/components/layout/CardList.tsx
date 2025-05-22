@@ -6,20 +6,21 @@ import CardComponent from '../common/CardComponent';
 
 
 const CardList = () => {
-    const [ cards, setCards ] = useState<Card[]>([]);
+    const [cards, setCards] = useState<Card[]>([]);
     useEffect(() => {
         getCards(setCards);
     }, [])
     return (
-        <div>
-            <List
-            dataSource={cards.map(card => ({ expansion: card.expansion.name, number: card.number, card: card }))}
-            renderItem={(card) => (
-                <List.Item>
-                    <CardComponent card={card.card} />
-                </List.Item>
-            )}
-            />
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+                gap: "1rem"
+            }}
+        >
+            {cards.map(card => (
+                <CardComponent key={card.number} card={card} />
+            ))}
         </div>
     )
 }

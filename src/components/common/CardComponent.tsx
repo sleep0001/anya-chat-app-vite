@@ -11,6 +11,7 @@ const CardComponent = ({ card }: Props) => {
             <img
                 src={"https://www.onepiece-cardgame.com/images/cardlist/card/" + card.expansion.name + "-" + formatThreeDigitString(card.number) + ".png"}
                 alt={card.name}
+                style={{ width:"150px", height:"auto" }}
             />
         </div>
     )
