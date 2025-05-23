@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { Message, Room, RoomManager } from '../types/Types';
+import { Card } from '../types/CardType';
 
 type Contexts = {
     userId: string;
@@ -10,6 +11,8 @@ type Contexts = {
     setEntryRoom: React.Dispatch<React.SetStateAction<Room>>;
     showMessage: Message[];
     setShowMessage: React.Dispatch<React.SetStateAction<Message[]>>;
+    cards: Card[];
+    setCards:React.Dispatch<React.SetStateAction<Card[]>>;
 }
 
 const Contexts = createContext<Contexts | undefined>(undefined);
@@ -19,6 +22,7 @@ export const ContextsProvider = ({ children }: { children: React.ReactNode }) =>
     const [rooms, setRooms] = useState<RoomManager>([]);
     const [entryRoom, setEntryRoom] = useState<Room>({roomId:"", roomName:""});
     const [showMessage, setShowMessage] = useState<Message[]>([]);
+    const [cards, setCards] = useState<Card[]>([]);
     return (
         <Contexts.Provider
             value={{
@@ -29,7 +33,9 @@ export const ContextsProvider = ({ children }: { children: React.ReactNode }) =>
                 entryRoom,
                 setEntryRoom,
                 showMessage,
-                setShowMessage
+                setShowMessage,
+                cards,
+                setCards
             }}
         >
             {children}
