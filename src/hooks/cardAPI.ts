@@ -21,10 +21,14 @@ export const getCards = async(setCards: (cards: Card[]) => void) => {
 }
 
 export const fetchSearchCards = async(setCards: (cards: Card[]) => void, requestData:SearchRequest) => {
+    /* The line `// const url:string = "https://www.sl33p.net";` is a commented-out line of code in the
+    TypeScript file. It is currently not being used in the functions `getCards` and
+    `fetchSearchCards`. */
     const url:string = "https://www.sl33p.net";
     // const url:string = "http://localhost:8080";
 
     try {
+        console.log(requestData);
         const response = await axios.post<Card[]>(url + "/api/cards/search", requestData, {
             headers: { Accept: "application/json" },
             auth: { username: "user", password: "password" },

@@ -5,15 +5,19 @@ import { useContexts } from "../../contexts/contexts";
 
 const { Option } = Select;
 
+type CardType = "Leader" | "Character" | "Event" | "Stage";
+
 export type SearchRequest = {
     name: string;
     minCost: number;
     maxCost: number;
     minPower: number;
     maxPower: number;
-    counter: number;
-    expansion: string;
-    type: { name: "Leader" | "Character" | "Event" | "Stage" };
+    blocks:string[];
+    counters: number[];
+    rarities:string[];
+    expansions: string[];
+    types:CardType[];
     colors: string[];
     features: string[];
     attributes: string[];
@@ -26,9 +30,11 @@ const SearchComponent = () => {
         maxCost: 10,
         minPower: 0,
         maxPower: 15000,
-        counter: 0,
-        expansion: '',
-        type: { name: "Character" },
+        blocks:[],
+        counters: [],
+        rarities:[],
+        expansions: [],
+        types: [],
         colors: [],
         features: [],
         attributes: []
@@ -74,8 +80,8 @@ const SearchComponent = () => {
                 <Select
                     mode="multiple"
                     placeholder="収録弾"
-                    value={formState.expansion}
-                    onChange={value => setFormState({ ...formState, expansion: value })}
+                    value={formState.expansions}
+                    onChange={value => setFormState({ ...formState, expansions: value })}
                     style={{ width: 200 }}
                 >
                     <Option value="OP01">OP01</Option>
@@ -113,8 +119,8 @@ const SearchComponent = () => {
                 <Select
                     mode="multiple"
                     placeholder="カードタイプ"
-                    value={formState.type.name}
-                    onChange={value => setFormState({ ...formState, type: { name: value } })}
+                    value={formState.types}
+                    onChange={value => setFormState({ ...formState, types: value })}
                     style={{ width: 200 }}
                 >
                     <Option value="Leader">Leader</Option>
