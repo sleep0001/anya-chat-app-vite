@@ -135,12 +135,12 @@ const SearchComponent = () => {
                     onChange={(colors) => setFormState({ ...formState, colors })}
                     style={{ width: '100%' }}
                 >
-                    <Option value="red">赤</Option>
-                    <Option value="blue">青</Option>
-                    <Option value="green">緑</Option>
-                    <Option value="purple">紫</Option>
-                    <Option value="black">黒</Option>
-                    <Option value="yellow">黄</Option>
+                    <Option value="赤">赤</Option>
+                    <Option value="青">青</Option>
+                    <Option value="緑">緑</Option>
+                    <Option value="紫">紫</Option>
+                    <Option value="黒">黒</Option>
+                    <Option value="黄">黄</Option>
                 </Select>
                 <Select
                     mode="multiple"

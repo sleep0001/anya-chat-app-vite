@@ -6,6 +6,7 @@ import { Layout } from 'antd';
 // import ChatRoom from '../components/layout/ChatRoom.tsx';
 import Lobby from '../components/layout/Lobby.tsx';
 import CardList from '../components/layout/CardList.tsx';
+import PreviewToolRelease from '../previewToolRelease/previewToolRelease.tsx';
 
 // const PageLayout = lazy(() => import('../components/layout/PageLayout.tsx'));
 // const Lobby = lazy(() => import('../components/layout/Lobby.tsx'));
@@ -20,6 +21,7 @@ export default function AppRoutes() {
                         <Route index element={<Lobby />} />
                         <Route path='/room/:roomId' element={<ChatRoom />} />
                         <Route path='/card' element={<CardList />} />
+                        <Route path='/toolInfo' element={<PreviewToolRelease />} />
                     </Route>
                 </Routes>
             </Layout>
