@@ -1,0 +1,13 @@
+.ranking-container {
+    background-color: rgba(243, 228, 231, 0.85);
+    width: 80%;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+@media screen and (max-width: 480px) {
+    .ranking-container {
+        width: 95%;
+    }
+}

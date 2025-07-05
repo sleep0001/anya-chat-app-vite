@@ -25,7 +25,8 @@ const DmpRanking: React.FC<Props> = ({ players }) => {
             title: '順位',
             dataIndex: 'currentRank',
             key: 'rank',
-            width: 100,
+            className: '.ant-table-cell.rank-col',
+            width: 70,
             align: 'center',
             render: renderRank,
         },
@@ -34,20 +35,21 @@ const DmpRanking: React.FC<Props> = ({ players }) => {
             dataIndex: 'name',
             key: 'name',
             className: 'player-name',
+            align: 'center',
             render: (name) => <strong>{name}</strong>,
         },
         {
             title: 'ポイント',
             dataIndex: 'currentPoint',
             key: 'point',
-            align: 'right',
+            align: 'center',
             className: 'point',
             render: (currentPoint) => <strong>{currentPoint}</strong>,
         },
         {
             title: '順位変動',
             key: 'rankDiff',
-            align: 'right',
+            align: 'center',
             render: (_, record) => {
                 if (record.rankDiff == 2147483647) {
                     return <Tag color="#4caf50">new!!</Tag>;
@@ -65,7 +67,7 @@ const DmpRanking: React.FC<Props> = ({ players }) => {
         {
             title: 'ポイント変動',
             key: 'pointDiff',
-            align: 'right',
+            align: 'center',
             render: (_, record) => {
                 if (record.rankDiff == 2147483647) {
                     return <Tag color="#4caf50">new!!</Tag>;

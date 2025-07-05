@@ -2,6 +2,7 @@ import AppHeader from '../common/AppHeader.tsx'
 import AppFooter from '../common/AppFooter.tsx'
 import { Outlet, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import './PageLayout.css';
 
 const PageLayout = () => {
     // フッターの表示切り替えを制御
@@ -30,16 +31,7 @@ const PageLayout = () => {
                 <AppHeader />
             </div>
 
-            <main
-                style={{
-                    backgroundColor: 'rgba(243, 228, 231, 0.85)',
-                    width: '80%',
-                    margin: '0 auto',
-                    paddingTop: '20px',
-                    paddingBottom: '30px',
-                    flexGrow: 1, // ← ここがポイント
-                }}
-            >
+            <main className="ranking-container">
                 <Outlet />
             </main>
 
