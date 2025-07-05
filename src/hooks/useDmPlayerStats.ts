@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { DmPlayerStats } from "../types/DmPlayerStats";
 
@@ -9,10 +10,13 @@ export const useDmPlayerStats = () => {
     useEffect(() => {
         const fetchStats = async () => {
         try {
-            const res = await fetch("https://sl33p.net/api/player");
-            if (!res.ok) throw new Error("Failed to fetch player data");
-            const data = await res.json();
-            setPlayers(data);
+            const url = "https://sl33p.net/api/player"
+            const response = await axios.get<DmPlayerStats[]>(url, {
+                headers: { Accept: "application/json" },
+                auth: { username: "user", password: "password" },
+                withCredentials: true
+            });
+            setPlayers(response.data);
         } catch (err: any) {
             setError(err.message || "Unknown error");
         } finally {

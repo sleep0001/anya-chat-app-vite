@@ -49,7 +49,9 @@ const DmpRanking: React.FC<Props> = ({ players }) => {
             key: 'rankDiff',
             align: 'right',
             render: (_, record) => {
-                if (record.rankDiff >= 10) {
+                if (record.rankDiff == 2147483647) {
+                    return <Tag color="#4caf50">new!!</Tag>;
+                } else if (record.rankDiff >= 10) {
                     return <Tag color="#c62828"><ArrowUpOutlined /> {record.rankDiff}</Tag>;
                 } else if (record.rankDiff > 0) {
                     return <Tag color="#ef5350"><ArrowUpOutlined /> {record.rankDiff}</Tag>;
@@ -65,7 +67,9 @@ const DmpRanking: React.FC<Props> = ({ players }) => {
             key: 'pointDiff',
             align: 'right',
             render: (_, record) => {
-                if (record.pointDiff >= 2000) {
+                if (record.rankDiff == 2147483647) {
+                    return <Tag color="#4caf50">new!!</Tag>;
+                } else if (record.pointDiff >= 2000) {
                     return <Tag color="#ff3b3b"><ArrowUpOutlined /> {record.pointDiff}</Tag>;
                 } else if (record.pointDiff >= 1000) {
                     return <Tag color="#ff7043"><ArrowUpOutlined /> {Math.abs(record.pointDiff)}</Tag>;
