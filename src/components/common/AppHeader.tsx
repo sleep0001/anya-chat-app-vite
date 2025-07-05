@@ -12,10 +12,11 @@ const AppHeader: React.FC = () => {
             label: <Link to="/">Home</Link>,
         },
         {
-            key: 'sub1',
+            key: 'sub2',
             label: 'More',
             children: [
-                { key: '2', label: <Link to="/card">カード</Link> }
+                { key: '2', label: <Link to="/dm">広島県ランキング</Link> },
+                { key: '3', label: <Link to="/card">ワンピ検索</Link> }
             ],
         },
     ];
