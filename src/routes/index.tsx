@@ -7,9 +7,8 @@ import { Layout } from 'antd';
 import Lobby from '../components/layout/Lobby.tsx';
 import CardList from '../components/layout/CardList.tsx';
 import PreviewToolRelease from '../previewToolRelease/previewToolRelease.tsx';
+import DmpRanking from '../components/pages/DmpRankingPage.tsx'
 
-// const PageLayout = lazy(() => import('../components/layout/PageLayout.tsx'));
-// const Lobby = lazy(() => import('../components/layout/Lobby.tsx'));
 const ChatRoom = lazy(() => import('../components/layout/ChatRoom.tsx'));
 
 export default function AppRoutes() {
@@ -22,6 +21,7 @@ export default function AppRoutes() {
                         <Route path='/room/:roomId' element={<ChatRoom />} />
                         <Route path='/card' element={<CardList />} />
                         <Route path='/toolInfo' element={<PreviewToolRelease />} />
+                        <Route path='/dm' element={<DmpRanking />} />
                     </Route>
                 </Routes>
             </Layout>

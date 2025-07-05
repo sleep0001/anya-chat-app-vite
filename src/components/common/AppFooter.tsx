@@ -8,7 +8,7 @@ const AppFooter: React.FC = () => {
     return (
         <Footer className={"footer_class"}>
             <div className={"footer_text"}>
-                <p>© 2025 narikiri engineer alliance.</p>
+                <p>© 2025 a-nya developer alliance.</p>
             </div>
         </Footer>
     );

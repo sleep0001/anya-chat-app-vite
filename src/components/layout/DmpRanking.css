@@ -1,0 +1,151 @@
+.ranking-wrapper.pink-theme {
+    padding: 24px;
+    background: linear-gradient(to bottom right, #ffe4ec, #fff0f5);
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(231, 111, 142, 0.2);
+}
+
+.ranking-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    text-align: center;
+    color: #d81b60;
+}
+
+.ranking-table .ant-table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.ranking-table .ant-table-thead>tr>th {
+    background-color: #f8bbd0 !important;
+    color: #880e4f;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.rank-gold {
+    color: #d4af37;
+    background: #fff8e1;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.rank-silver {
+    color: #b0b0b0;
+    background: #f3f3f3;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.rank-bronze {
+    color: #cd7f32;
+    background: #fff3e0;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+/* 全体のラップ */
+.ranking-wrapper {
+    padding: 24px;
+    background-color: #fff7fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+/* タイトル */
+.ranking-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #880e4f;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* テーブル全体 */
+.ranking-table .ant-table {
+    font-size: 1.1rem;
+}
+
+.ranking-table .ant-table-thead > tr > th {
+    background-color: #fce4ec;
+    color: #4a148c;
+    font-weight: bold;
+    font-size: 1.35rem;
+    text-align: center;
+}
+
+/* 中央寄せのカラム（順位など） */
+.ranking-table .ant-table-cell {
+    vertical-align: middle;
+}
+
+/* トップ3順位用のカスタムカラー */
+.rank-gold {
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.rank-silver {
+    color: #c0c0c0;
+    font-weight: bold;
+}
+
+.rank-bronze {
+    color: #cd7f32;
+    font-weight: bold;
+}
+
+/* Tagコンポーネントのフォント調整 */
+.ant-tag {
+    font-size: 1.5rem;
+    padding: 4px 8px;
+}
+
+/* プレイヤー名列を強調 */
+.ranking-table .ant-table-cell.player-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a148c;
+}
+
+/* ポイント列を強調 */
+.ranking-table .ant-table-cell.point {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1b5e20; /* 深めの緑で信頼感と安定感を表現 */
+}
+
+/* 共通: プレイヤー名とポイント列ベース */
+.ranking-table .ant-table-cell.player-name {
+    font-weight: bold;
+    color: #4a148c;
+}
+.ranking-table .ant-table-cell.point {
+    font-weight: bold;
+    color: #1b5e20;
+}
+
+/* 上位3名にサイズ差を */
+.ranking-table .rank-1 .player-name,
+.ranking-table .rank-1 .point {
+    font-size: 1.6rem;
+}
+
+.ranking-table .rank-2 .player-name,
+.ranking-table .rank-2 .point {
+    font-size: 1.4rem;
+}
+
+.ranking-table .rank-3 .player-name,
+.ranking-table .rank-3 .point {
+    font-size: 1.3rem;
+}
+
+/* 4位以下 */
+.ranking-table .player-name,
+.ranking-table .point {
+    font-size: 1.2rem;
+}
