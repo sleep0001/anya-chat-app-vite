@@ -8,6 +8,7 @@ import Lobby from '../components/layout/Lobby.tsx';
 import CardList from '../components/layout/CardList.tsx';
 import PreviewToolRelease from '../previewToolRelease/previewToolRelease.tsx';
 import DmpRanking from '../components/pages/DmpRankingPage.tsx'
+import DmpRankingLatestPage from '../components/pages/DmpRankingLatestPage.tsx';
 
 const ChatRoom = lazy(() => import('../components/layout/ChatRoom.tsx'));
 
@@ -22,6 +23,7 @@ export default function AppRoutes() {
                         <Route path='/card' element={<CardList />} />
                         <Route path='/toolInfo' element={<PreviewToolRelease />} />
                         <Route path='/dm' element={<DmpRanking />} />
+                        <Route path='/rank' element={<DmpRankingLatestPage />} />
                     </Route>
                 </Routes>
             </Layout>

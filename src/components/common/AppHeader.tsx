@@ -15,8 +15,9 @@ const AppHeader: React.FC = () => {
             key: 'sub2',
             label: 'More',
             children: [
-                { key: '2', label: <Link to="/dm">広島県ランキング</Link> },
-                { key: '3', label: <Link to="/card">ワンピ検索</Link> }
+                { key: '2', label: <Link to="/rank">DMP Ranking</Link> },
+                { key: '3', label: <Link to="/dm">アニャマス県ランキング</Link> },
+                { key: '4', label: <Link to="/card">ワンピ検索</Link> }
             ],
         },
     ];
