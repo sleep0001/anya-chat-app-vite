@@ -14,20 +14,18 @@ interface Props {
 const DmpRankingLatest: React.FC<Props> = ({ latestUpDate, players }) => {
     const [selectedPrefecture, setSelectedPrefecture] = useState<string>("");
 
-    const filteredPlayers = useMemo(() => {
-        return selectedPrefecture === ""
+    const rankedPlayers = useMemo(() => {
+        const filtered = selectedPrefecture === ""
             ? players
             : players.filter((player) => player.prefecture === selectedPrefecture);
-    }, [selectedPrefecture, players]);
 
-    const rankedPlayers = useMemo(() => {
-        const sorted = [...filteredPlayers].sort((a, b) => b.point - a.point); // 降順（高得点が上）
+        const sorted = [...filtered].sort((a, b) => b.point - a.point); // 降順
 
         return sorted.map((player, index) => ({
             ...player,
             rank: index + 1,
         }));
-    }, [filteredPlayers]);
+    }, [selectedPrefecture, players]);
 
     const renderRank = (rank: number) => {
         const base = <strong>{rank}</strong>;
@@ -37,39 +35,59 @@ const DmpRankingLatest: React.FC<Props> = ({ latestUpDate, players }) => {
         return base;
     };
 
-    const columns: ColumnsType<RankingPlayerData> = [
-        {
-            title: '順位',
-            dataIndex: 'rank',
-            key: 'rank',
-            className: '.ant-table-cell.rank-col',
-            width: 70,
-            align: 'center',
-            render: renderRank,
-        },
-        {
-            title: 'プレイヤー名',
-            dataIndex: 'name',
-            key: 'name',
-            className: 'player-name',
-            align: 'center',
-            render: (name) => <strong>{name}</strong>,
-        },
-        {
-            title: 'ポイント',
-            dataIndex: 'point',
-            key: 'point',
-            align: 'center',
-            className: 'point',
-            render: (point) => <strong>{point} pt</strong>,
+    const showAllRank = selectedPrefecture !== "";
+    const columns: ColumnsType<RankingPlayerData> = useMemo(() => {
+        const baseColumns: ColumnsType<RankingPlayerData> = [
+            {
+                title: '順位',
+                dataIndex: 'rank',
+                key: 'rank',
+                className: '.ant-table-cell.rank-col',
+                width: 70,
+                align: 'center',
+                render: renderRank,
+            },
+            {
+                title: 'プレイヤー名',
+                dataIndex: 'name',
+                key: 'name',
+                className: 'player-name',
+                align: 'center',
+                render: (name) => <strong>{name}</strong>,
+            },
+            {
+                title: 'ポイント',
+                dataIndex: 'point',
+                key: 'point',
+                align: 'center',
+                className: 'point',
+                render: (point) => <strong>{point} pt</strong>,
+            },
+        ];
+
+        if (showAllRank) {
+            baseColumns.push({
+                title: '全国',
+                dataIndex: 'allRank',
+                key: 'allRank',
+                align: 'center',
+                className: 'point',
+                render: (allRank) => <strong>全国{allRank} 位</strong>,
+            });
         }
-    ];
+
+        return baseColumns;
+    }, [selectedPrefecture]);
 
     return (
         <div className="ranking-wrapper pink-theme">
             <h2 className="ranking-title">{selectedPrefecture}プレイヤーランキング</h2>
             <PrefectureSelector value={selectedPrefecture} onChange={setSelectedPrefecture} />
-            <p>最終加算日：{latestUpDate.toISOString()}</p>
+            <p>最終加算日：{latestUpDate.toLocaleDateString('ja-JP', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            })}</p>
             <Table
                 columns={columns}
                 dataSource={rankedPlayers

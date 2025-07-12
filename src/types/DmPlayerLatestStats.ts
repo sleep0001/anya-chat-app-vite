@@ -9,4 +9,5 @@ export type RankingPlayerData = {
     prefecture:string; // 都道府県名 絞り込みに使う
     point:number; // ポイント
     rank?:number;
+    allRank?:number;
 }
