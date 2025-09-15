@@ -74879,7 +74879,13 @@ const rankingPlayerData: RankingPlayerData[] = [
     },
 ];
 
-export const DmPlayerLatestStatsTest:DmPlayerLatestStats = {
-    latestUpDate:latestUpDate,
-    rankingPlayerData:rankingPlayerData,
-}
+export const DmPlayerLatestStatsTest: DmPlayerLatestStats = {
+    "2025-04-01_2025-09-30": {
+        latestUpDate: latestUpDate,
+        rankingPlayerData: rankingPlayerData
+    },
+    "2025-10-01_2026-03-31": {
+        latestUpDate: latestUpDate,
+        rankingPlayerData: rankingPlayerData
+    }
+};
