@@ -2,16 +2,27 @@ import React, { useState, useMemo } from 'react';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { CrownOutlined } from '@ant-design/icons';
-import { RankingPlayerData } from '../../types/DmPlayerLatestStats';
+import { RankingPlayerData, PeriodOption } from '../../types/DmPlayerLatestStats';
 import './DmpRanking.css';
 import PrefectureSelector from "../Button/PrefectureSelector";
+import PeriodDropDown from "../common/PeriodDropDown";
 
 interface Props {
     latestUpDate: Date;
     players: RankingPlayerData[];
+    // 期間選択用のpropsを追加
+    selectedPeriod: string;
+    onPeriodChange: (period: string) => void;
+    periodOptions: PeriodOption[];
 }
 
-const DmpRankingLatest: React.FC<Props> = ({ latestUpDate, players }) => {
+const DmpRankingLatest: React.FC<Props> = ({ 
+    latestUpDate, 
+    players, 
+    selectedPeriod, 
+    onPeriodChange, 
+    periodOptions 
+}) => {
     const [selectedPrefecture, setSelectedPrefecture] = useState<string>("");
 
     const rankedPlayers = useMemo(() => {
@@ -83,12 +94,21 @@ const DmpRankingLatest: React.FC<Props> = ({ latestUpDate, players }) => {
         <div className="ranking-wrapper pink-theme">
             <h2 className="ranking-title">{selectedPrefecture}プレイヤーランキング</h2>
             
+            {/* 期間選択を追加 */}
+            <PeriodDropDown
+                selectedPeriod={selectedPeriod}
+                onPeriodChange={onPeriodChange}
+                periodOptions={periodOptions}
+            />
+            
             <PrefectureSelector value={selectedPrefecture} onChange={setSelectedPrefecture} />
+            
             <p>最終加算日：{latestUpDate.toLocaleDateString('ja-JP', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             })}</p>
+            
             <Table
                 columns={columns}
                 dataSource={rankedPlayers

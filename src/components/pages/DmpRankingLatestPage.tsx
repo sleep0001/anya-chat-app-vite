@@ -6,15 +6,10 @@ import { RankingPlayerData } from '../../types/DmPlayerLatestStats';
 import PeriodDropDown from '../common/PeriodDropDown';
 
 const DmpRankingLatestPage = () => {
-    // const { latestUpDate, rankingPlayerData, loading, error } = useDmPlayerLatestStats();
     const { allRankingData, loading, error } = useDmPlayerLatestStats();
-    /** ユーザが選択している期間（キー） */
     const [selectedPeriod, setSelectedPeriod] = useState<string>('');
-
-    /** ユーザが選択している期間に対応するデータ */
     const [rankingPlayerData, setRankingPlayerData] = useState<RankingPlayerData[]>([]);
 
-    /** プルダウン（期間）用の選択肢 */
     const periodOptions = useMemo(() => {
         if (!allRankingData || Object.keys(allRankingData).length === 0) return [];
         
@@ -28,7 +23,7 @@ const DmpRankingLatestPage = () => {
                     endDate: new Date(endDate)      // Date型に変換
                 };
             })
-            // 当日までのstartDateのみを対象にする。
+            // 当日までのstartDateのみを対処
             .filter(period => {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0); // 時間を00:00:00に設定して日付のみで比較
@@ -75,19 +70,15 @@ const DmpRankingLatestPage = () => {
     if (loading) return <div className="p-4">読み込み中...</div>;
     if (error) return <div className="p-4 text-red-500">エラー: {error}</div>;
 
-    
     return (
         <div className="p-4">
-            <PeriodDropDown
-                selectedPeriod={selectedPeriod}
-                onPeriodChange={setSelectedPeriod}
-                periodOptions={periodOptions}
-            />
-            
             {latestUpDate && allRankedPlayers.length > 0 && (
                 <DmpRankingLatest 
                     latestUpDate={latestUpDate} 
-                    players={allRankedPlayers} 
+                    players={allRankedPlayers}
+                    selectedPeriod={selectedPeriod}
+                    onPeriodChange={setSelectedPeriod}
+                    periodOptions={periodOptions}
                 />
             )}
         </div>
