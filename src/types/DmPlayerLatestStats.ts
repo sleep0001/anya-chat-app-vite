@@ -1,6 +1,21 @@
+// export interface CachedRankingResponse {
+//     [key: string]: {
+//         DmPlayerLatestStats:DmPlayerLatestStats;
+//     };
+// }
+
+export interface PeriodOption {
+    key: string;
+    label: string;
+    startDate:Date;
+    endDate:Date;
+}
+
 export type DmPlayerLatestStats = {
-    latestUpDate:Date;
-    rankingPlayerData:RankingPlayerData[];
+    [key: string]: {
+        latestUpDate:Date;
+        rankingPlayerData:RankingPlayerData[];
+    };
 }
 
 export type RankingPlayerData = {

@@ -82,6 +82,7 @@ const DmpRankingLatest: React.FC<Props> = ({ latestUpDate, players }) => {
     return (
         <div className="ranking-wrapper pink-theme">
             <h2 className="ranking-title">{selectedPrefecture}プレイヤーランキング</h2>
+            
             <PrefectureSelector value={selectedPrefecture} onChange={setSelectedPrefecture} />
             <p>最終加算日：{latestUpDate.toLocaleDateString('ja-JP', {
                 year: 'numeric',
