@@ -94,14 +94,19 @@ const DmpRankingLatest: React.FC<Props> = ({
         <div className="ranking-wrapper pink-theme">
             <h2 className="ranking-title">{selectedPrefecture}プレイヤーランキング</h2>
             
-            {/* 期間選択を追加 */}
-            <PeriodDropDown
-                selectedPeriod={selectedPeriod}
-                onPeriodChange={onPeriodChange}
-                periodOptions={periodOptions}
-            />
+            {/* 期間選択を上に配置 */}
+            <div style={{ marginBottom: '16px' }}>
+                <PeriodDropDown
+                    selectedPeriod={selectedPeriod}
+                    onPeriodChange={onPeriodChange}
+                    periodOptions={periodOptions}
+                />
+            </div>
             
-            <PrefectureSelector value={selectedPrefecture} onChange={setSelectedPrefecture} />
+            {/* 都道府県選択を下に配置 */}
+            <div style={{ marginBottom: '16px' }}>
+                <PrefectureSelector value={selectedPrefecture} onChange={setSelectedPrefecture} />
+            </div>
             
             <p>最終加算日：{latestUpDate.toLocaleDateString('ja-JP', {
                 year: 'numeric',

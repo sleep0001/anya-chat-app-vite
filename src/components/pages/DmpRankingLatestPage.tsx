@@ -1,9 +1,7 @@
 import DmpRankingLatest from '../layout/DmpRankingLatest';
 import { useDmPlayerLatestStats } from '../../hooks/useDmPlayerLatestStats';
-// import { DmPlayerLatestStatsTest } from '../../test/DmPlayerLatestStatsTest';
 import { useMemo, useState, useEffect } from 'react';
 import { RankingPlayerData } from '../../types/DmPlayerLatestStats';
-import PeriodDropDown from '../common/PeriodDropDown';
 
 const DmpRankingLatestPage = () => {
     const { allRankingData, loading, error } = useDmPlayerLatestStats();
