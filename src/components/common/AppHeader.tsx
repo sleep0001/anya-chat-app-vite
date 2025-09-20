@@ -17,7 +17,8 @@ const AppHeader: React.FC = () => {
             children: [
                 { key: '2', label: <Link to="/rank">DMP Ranking</Link> },
                 { key: '3', label: <Link to="/dm">アニャマス県ランキング</Link> },
-                { key: '4', label: <Link to="/card">ワンピ検索</Link> }
+                { key: '4', label: <Link to="/seatrees">樹海CS</Link> },
+                { key: '5', label: <Link to="/card">ワンピ検索</Link> }
             ],
         },
     ];

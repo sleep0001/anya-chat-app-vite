@@ -10,6 +10,7 @@ import PreviewToolRelease from '../previewToolRelease/previewToolRelease.tsx';
 import DmpRanking from '../components/pages/DmpRankingPage.tsx'
 import DmpRankingLatestPage from '../components/pages/DmpRankingLatestPage.tsx';
 import ErrorBoundary from '../components/ErrorBoundary.tsx';
+import SeaTrees from '../components/pages/SeaTrees.tsx';
 
 const ChatRoom = lazy(() => import('../components/layout/ChatRoom.tsx'));
 
@@ -25,6 +26,7 @@ export default function AppRoutes() {
                             <Route path='/toolInfo' element={<PreviewToolRelease />} />
                             <Route path='/dm' element={<DmpRanking />} />
                             <Route path='/rank' element={<ErrorBoundary><DmpRankingLatestPage /></ErrorBoundary>} />
+                            <Route path='/seatrees' element={<SeaTrees />} />
                         </Route>
                 </Routes>
             </Layout>

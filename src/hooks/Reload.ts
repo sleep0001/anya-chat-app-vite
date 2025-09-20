@@ -2,7 +2,7 @@ import axios from 'axios';
 import { RoomManager } from '../types/Types';
 
 export const fetchRooms = async(setRooms: (rooms: RoomManager) => void) => {
-    const url:string = "https://www.sl33p.net";
+    const url:string = "https://www.sl33p.net/anyaApp";
 
     try {
         const response = await axios.get<Record<string, string>>(url + "/api/reload", {

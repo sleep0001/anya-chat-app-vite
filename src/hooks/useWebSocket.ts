@@ -8,7 +8,7 @@ import { Message, Room } from '../types/Types';
 import dayjs from "dayjs";
 
 export const useWebSocket = () => {
-    const url:string = "wss://www.sl33p.net/ws/game"
+    const url:string = "wss://www.sl33p.net/anyaApp/ws/game"
     const socketRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<number | null>(null);
     type response = {
