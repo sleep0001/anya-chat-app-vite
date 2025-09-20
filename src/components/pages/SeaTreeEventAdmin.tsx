@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import TableContent from '../common/TableContent';
 
 interface SeaTreeEventName {
     id: number;
     name: string;
+    include: boolean;
 }
 
 interface Credentials {
@@ -10,14 +12,11 @@ interface Credentials {
     password: string;
 }
 
-// ローカルストレージのキー
 const STORAGE_KEY = 'seatree_admin_session';
 
 const SeaTreeEventAdmin: React.FC = () => {
     const [eventNames, setEventNames] = useState<SeaTreeEventName[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [editingKey, setEditingKey] = useState<number | null>(null);
-    const [editingName, setEditingName] = useState<string>('');
     const [credentials, setCredentials] = useState<Credentials>({ username: '', password: '' });
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [loginLoading, setLoginLoading] = useState<boolean>(false);
@@ -25,24 +24,22 @@ const SeaTreeEventAdmin: React.FC = () => {
     const [newEventName, setNewEventName] = useState<string>('');
     const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info', text: string } | null>(null);
     const [rememberMe, setRememberMe] = useState<boolean>(false);
+    const [isInclude, setIsInclude] = useState<boolean>(true);
 
-    // コンポーネント初期化時にローカルストレージから認証情報を復元
+    // セッション復元
     useEffect(() => {
         const savedSession = localStorage.getItem(STORAGE_KEY);
         if (savedSession) {
             try {
                 const session = JSON.parse(savedSession);
                 const now = new Date().getTime();
-                
-                // セッションの有効期限をチェック（24時間）
+
                 if (session.expiresAt && now < session.expiresAt) {
                     setCredentials(session.credentials);
                     setIsAuthenticated(true);
                     setRememberMe(true);
-                    // 自動でデータを読み込む
                     loadEventNamesWithCredentials(session.credentials);
                 } else {
-                    // 期限切れの場合はクリア
                     localStorage.removeItem(STORAGE_KEY);
                 }
             } catch (error) {
@@ -52,23 +49,29 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     }, []);
 
-    // ログイン状態をローカルストレージに保存
     const saveSession = (creds: Credentials, remember: boolean) => {
         if (remember) {
             const session = {
                 credentials: creds,
-                expiresAt: new Date().getTime() + (24 * 60 * 60 * 1000) // 24時間後
+                expiresAt: new Date().getTime() + (24 * 60 * 60 * 1000)
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
         }
     };
 
-    // セッションクリア
     const clearSession = () => {
         localStorage.removeItem(STORAGE_KEY);
     };
 
-    // スタイル定義（省略 - 既存のstylesオブジェクトをそのまま使用）
+    // データをisIncludeで分離
+    const includeList: SeaTreeEventName[] = useMemo(() => {
+        return eventNames.filter(item => item.include === true);
+    }, [eventNames]);
+
+    const excludeList: SeaTreeEventName[] = useMemo(() => {
+        return eventNames.filter(item => item.include === false);
+    }, [eventNames]);
+
     const styles = {
         container: {
             minHeight: '100vh',
@@ -128,10 +131,6 @@ const SeaTreeEventAdmin: React.FC = () => {
             fontSize: '16px',
             transition: 'all 0.2s',
             outline: 'none'
-        },
-        inputFocus: {
-            borderColor: '#667eea',
-            boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)'
         },
         button: {
             width: '100%',
@@ -217,7 +216,8 @@ const SeaTreeEventAdmin: React.FC = () => {
         card: {
             backgroundColor: 'white',
             borderRadius: '12px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            marginBottom: '24px'
         },
         cardHeader: {
             padding: '24px',
@@ -256,59 +256,6 @@ const SeaTreeEventAdmin: React.FC = () => {
             gap: '8px',
             transition: 'all 0.2s'
         },
-        table: {
-            width: '100%',
-            borderCollapse: 'collapse' as const
-        },
-        th: {
-            padding: '12px 24px',
-            backgroundColor: '#f9fafb',
-            color: '#374151',
-            fontSize: '12px',
-            fontWeight: '500',
-            textTransform: 'uppercase' as const,
-            letterSpacing: '0.05em',
-            textAlign: 'left' as const
-        },
-        td: {
-            padding: '16px 24px',
-            borderTop: '1px solid #f3f4f6'
-        },
-        tr: {
-            transition: 'background-color 0.2s'
-        },
-        trHover: {
-            backgroundColor: '#f9fafb'
-        },
-        idBadge: {
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '2px 8px',
-            borderRadius: '12px',
-            fontSize: '12px',
-            fontWeight: '500',
-            backgroundColor: '#dbeafe',
-            color: '#1e40af'
-        },
-        editInput: {
-            width: '100%',
-            padding: '8px 12px',
-            border: '2px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '14px',
-            outline: 'none',
-            transition: 'border-color 0.2s'
-        },
-        actionButton: {
-            padding: '6px 12px',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            marginLeft: '8px'
-        },
         checkboxGroup: {
             display: 'flex',
             alignItems: 'center',
@@ -320,29 +267,12 @@ const SeaTreeEventAdmin: React.FC = () => {
             height: '18px',
             cursor: 'pointer'
         },
-        
         checkboxLabel: {
             fontSize: '14px',
             fontWeight: '500',
             cursor: 'pointer',
             transition: 'all 0.2s',
             marginLeft: '8px'
-        },
-        editButton: {
-            backgroundColor: '#3b82f6',
-            color: 'white'
-        },
-        deleteButton: {
-            backgroundColor: '#ef4444',
-            color: 'white'
-        },
-        saveButton: {
-            backgroundColor: '#10b981',
-            color: 'white'
-        },
-        cancelButton: {
-            backgroundColor: '#6b7280',
-            color: 'white'
         },
         modal: {
             position: 'fixed' as const,
@@ -389,15 +319,6 @@ const SeaTreeEventAdmin: React.FC = () => {
             fontWeight: '500',
             cursor: 'pointer'
         },
-        loadingSpinner: {
-            display: 'inline-block',
-            width: '20px',
-            height: '20px',
-            border: '3px solid #f3f4f6',
-            borderTop: '3px solid #3b82f6',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-        },
         messageAlert: {
             padding: '16px',
             borderRadius: '8px',
@@ -418,30 +339,14 @@ const SeaTreeEventAdmin: React.FC = () => {
             backgroundColor: '#eff6ff',
             borderColor: '#bfdbfe',
             color: '#1e40af'
-        },
-        emptyState: {
-            padding: '48px 24px',
-            textAlign: 'center' as const
-        },
-        emptyIcon: {
-            width: '64px',
-            height: '64px',
-            color: '#d1d5db',
-            margin: '0 auto 16px'
-        },
-        emptyText: {
-            fontSize: '18px',
-            color: '#6b7280'
         }
     };
 
-    // メッセージ表示
     const showMessage = (type: 'success' | 'error' | 'info', text: string) => {
         setMessage({ type, text });
         setTimeout(() => setMessage(null), 4000);
     };
 
-    // Basic認証ヘッダーの生成
     const createAuthHeaders = (creds?: Credentials): Record<string, string> => {
         const useCreds = creds || credentials;
         return {
@@ -450,7 +355,6 @@ const SeaTreeEventAdmin: React.FC = () => {
         };
     };
 
-    // 指定した認証情報でイベント名を読み込み
     const loadEventNamesWithCredentials = async (creds: Credentials): Promise<void> => {
         setLoading(true);
         try {
@@ -463,7 +367,6 @@ const SeaTreeEventAdmin: React.FC = () => {
                 const sortedData = data.sort((a, b) => a.id - b.id);
                 setEventNames(sortedData);
             } else if (response.status === 401) {
-                // 認証エラーの場合はセッションをクリア
                 clearSession();
                 setIsAuthenticated(false);
                 showMessage('error', 'セッションの有効期限が切れました。再ログインしてください。');
@@ -477,7 +380,6 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    // ログイン処理
     const handleLogin = async (): Promise<void> => {
         if (!credentials.username || !credentials.password) {
             showMessage('error', 'ユーザー名とパスワードを入力してください');
@@ -494,12 +396,11 @@ const SeaTreeEventAdmin: React.FC = () => {
             if (response.ok) {
                 setIsAuthenticated(true);
                 showMessage('success', 'ログインしました');
-                
-                // ログイン状態を保存
+
                 if (rememberMe) {
                     saveSession(credentials, true);
                 }
-                
+
                 await loadEventNamesWithCredentials(credentials);
             } else if (response.status === 401) {
                 showMessage('error', '認証に失敗しました。ユーザー名とパスワードを確認してください。');
@@ -513,7 +414,6 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    // ログアウト処理
     const handleLogout = (): void => {
         setIsAuthenticated(false);
         setCredentials({ username: '', password: '' });
@@ -523,7 +423,7 @@ const SeaTreeEventAdmin: React.FC = () => {
         showMessage('info', 'ログアウトしました');
     };
 
-    const handleAdd = async (): Promise<void> => {
+    const handleAdd = async (isInclude: boolean): Promise<void> => {
         if (!newEventName.trim()) {
             showMessage('error', 'イベント名を入力してください');
             return;
@@ -534,7 +434,7 @@ const SeaTreeEventAdmin: React.FC = () => {
             const response = await fetch('https://www.sl33p.net/api/player/admin/seatree-events', {
                 method: 'POST',
                 headers: createAuthHeaders(),
-                body: JSON.stringify({ name: newEventName.trim() })
+                body: JSON.stringify({ name: newEventName.trim(), isInclude: isInclude })
             });
 
             if (response.ok) {
@@ -554,10 +454,10 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    const handleUpdate = async (id: number): Promise<void> => {
-        if (!editingName.trim()) {
+    const handleUpdate = async (id: number, newName: string, isInclude: boolean): Promise<boolean> => {
+        if (!newName.trim()) {
             showMessage('error', 'イベント名を入力してください');
-            return;
+            return false;
         }
 
         setLoading(true);
@@ -566,21 +466,22 @@ const SeaTreeEventAdmin: React.FC = () => {
             const response = await fetch(`https://www.sl33p.net/api/player/admin/seatree-events/${id}`, {
                 method: 'PUT',
                 headers: createAuthHeaders(),
-                body: JSON.stringify({ name: editingName.trim() })
+                body: JSON.stringify({ name: newName.trim(), isInclude: isInclude })
             });
 
             if (response.ok) {
                 const updatedEvent: SeaTreeEventName = await response.json();
                 setEventNames(eventNames.map(event => event.id === id ? updatedEvent : event));
-                setEditingKey(null);
-                setEditingName('');
                 showMessage('success', 'イベント名を更新しました。');
+                return true;
             } else {
                 const errorText = await response.text();
                 showMessage('error', errorText || '更新に失敗しました。');
+                return false;
             }
         } catch (error) {
             showMessage('error', 'ネットワークエラーが発生しました。');
+            return false;
         } finally {
             setLoading(false);
         }
@@ -610,17 +511,6 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    const startEdit = (event: SeaTreeEventName): void => {
-        setEditingKey(event.id);
-        setEditingName(event.name);
-    };
-
-    const cancelEdit = (): void => {
-        setEditingKey(null);
-        setEditingName('');
-    };
-
-    // メッセージコンポーネント
     const MessageAlert = () => {
         if (!message) return null;
 
@@ -635,7 +525,6 @@ const SeaTreeEventAdmin: React.FC = () => {
         );
     };
 
-    // ログインフォーム
     if (!isAuthenticated) {
         return (
             <div style={styles.container}>
@@ -704,7 +593,6 @@ const SeaTreeEventAdmin: React.FC = () => {
         );
     }
 
-    // メイン管理画面（既存のコードと同様だが、ログアウト処理が更新されている）
     return (
         <div>
             <style>{`
@@ -721,7 +609,6 @@ const SeaTreeEventAdmin: React.FC = () => {
                 }
             `}</style>
             <div style={styles.mainContainer}>
-                {/* ヘッダー */}
                 <header style={styles.headerMain}>
                     <div style={styles.headerContent}>
                         <div style={styles.logoArea}>
@@ -751,15 +638,15 @@ const SeaTreeEventAdmin: React.FC = () => {
                     </div>
                 </header>
 
-                {/* メインコンテンツ */}
                 <main style={styles.mainContent}>
                     <MessageAlert />
 
+                    {/* 含むリスト */}
                     <div style={styles.card}>
                         <div style={styles.cardHeader}>
                             <div style={styles.cardTitle}>
-                                集計対象CS
-                                <span style={styles.badge}>{eventNames.length}件</span>
+                                集計に含むCS
+                                <span style={styles.badge}>{includeList.length}件</span>
                             </div>
                             <button
                                 onClick={() => setAddModalVisible(true)}
@@ -773,101 +660,45 @@ const SeaTreeEventAdmin: React.FC = () => {
                                 新規追加
                             </button>
                         </div>
+                        <TableContent<SeaTreeEventName>
+                            data={includeList}
+                            loading={loading}
+                            onEdit={handleUpdate}
+                            onDelete={handleDelete}
+                            emptyMessage="含むイベント名がありません"
+                            tableHeader="含むイベント名"
+                            showIncludeToggle={true}
+                        />
+                    </div>
 
-                        {loading ? (
-                            <div style={styles.emptyState}>
-                                <div style={styles.loadingSpinner}></div>
-                                <p style={{ ...styles.emptyText, marginTop: '16px' }}>読み込み中...</p>
+                    {/* 除外リスト */}
+                    <div style={styles.card}>
+                        <div style={styles.cardHeader}>
+                            <div style={styles.cardTitle}>
+                                集計から除外するCS
+                                <span style={styles.badge}>{excludeList.length}件</span>
                             </div>
-                        ) : eventNames.length === 0 ? (
-                            <div style={styles.emptyState}>
-                                <svg style={styles.emptyIcon} fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            <button
+                                onClick={() => setAddModalVisible(true)}
+                                style={styles.addButton}
+                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                            >
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                                 </svg>
-                                <p style={styles.emptyText}>登録されているイベント名がありません</p>
-                            </div>
-                        ) : (
-                            <table style={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th style={styles.th}>イベント名</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {eventNames.map((event) => (
-                                        <tr key={event.id} style={styles.tr}>
-                                            <td style={styles.td}>
-                                                {editingKey === event.id ? (
-                                                    <input
-                                                        type="text"
-                                                        value={editingName}
-                                                        onChange={(e) => setEditingName(e.target.value)}
-                                                        style={{
-                                                            ...styles.editInput,
-                                                            borderColor: '#3b82f6'
-                                                        }}
-                                                        onKeyDown={(e) => e.key === 'Enter' && handleUpdate(event.id)}
-                                                        autoFocus
-                                                    />
-                                                ) : (
-                                                    <div style={{ fontSize: '14px', fontWeight: '500', color: '#1f2937' }}>
-                                                        {event.name}
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td style={{ ...styles.td, textAlign: 'right' }}>
-                                                {editingKey === event.id ? (
-                                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                        <button
-                                                            onClick={() => handleUpdate(event.id)}
-                                                            disabled={loading}
-                                                            style={{
-                                                                ...styles.actionButton,
-                                                                ...styles.saveButton,
-                                                                opacity: loading ? 0.5 : 1
-                                                            }}
-                                                        >
-                                                            保存
-                                                        </button>
-                                                        <button
-                                                            onClick={cancelEdit}
-                                                            style={{ ...styles.actionButton, ...styles.cancelButton }}
-                                                        >
-                                                            キャンセル
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                                        <button
-                                                            onClick={() => startEdit(event)}
-                                                            disabled={editingKey !== null}
-                                                            style={{
-                                                                ...styles.actionButton,
-                                                                ...styles.editButton,
-                                                                opacity: editingKey !== null ? 0.5 : 1
-                                                            }}
-                                                        >
-                                                            編集
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDelete(event.id, event.name)}
-                                                            disabled={editingKey !== null}
-                                                            style={{
-                                                                ...styles.actionButton,
-                                                                ...styles.deleteButton,
-                                                                opacity: editingKey !== null ? 0.5 : 1
-                                                            }}
-                                                        >
-                                                            削除
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
+                                新規追加
+                            </button>
+                        </div>
+                        <TableContent<SeaTreeEventName>
+                            data={excludeList}
+                            loading={loading}
+                            onEdit={handleUpdate}
+                            onDelete={handleDelete}
+                            emptyMessage="除外するイベント名がありません"
+                            tableHeader="除外するイベント名"
+                            showIncludeToggle={true}
+                        />
                     </div>
                 </main>
 
@@ -887,7 +718,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                                         onChange={(e) => setNewEventName(e.target.value)}
                                         style={styles.input}
                                         placeholder="例: 樹海CS"
-                                        onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleAdd(true)}
                                         autoFocus
                                     />
                                 </div>
@@ -902,7 +733,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                                         キャンセル
                                     </button>
                                     <button
-                                        onClick={handleAdd}
+                                        onClick={() => handleAdd(true)}
                                         disabled={loading || !newEventName.trim()}
                                         style={{
                                             ...styles.addButton,
