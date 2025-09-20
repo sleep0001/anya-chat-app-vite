@@ -11,6 +11,7 @@ import DmpRanking from '../components/pages/DmpRankingPage.tsx'
 import DmpRankingLatestPage from '../components/pages/DmpRankingLatestPage.tsx';
 import ErrorBoundary from '../components/ErrorBoundary.tsx';
 import SeaTrees from '../components/pages/SeaTrees.tsx';
+import SeaTreeEventAdmin from '../components/pages/SeaTreeEventAdmin.tsx';
 
 const ChatRoom = lazy(() => import('../components/layout/ChatRoom.tsx'));
 
@@ -27,6 +28,7 @@ export default function AppRoutes() {
                             <Route path='/dm' element={<DmpRanking />} />
                             <Route path='/rank' element={<ErrorBoundary><DmpRankingLatestPage /></ErrorBoundary>} />
                             <Route path='/seatrees' element={<SeaTrees />} />
+                            <Route path='/seatrees/admin' element={<SeaTreeEventAdmin />} />
                         </Route>
                 </Routes>
             </Layout>
