@@ -406,7 +406,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                 showMessage('error', '認証エラーが発生しました。');
             }
         } catch (error) {
-            showMessage('error', '接続エラーが発生しました。');
+            showMessage('error', '認証エラーが発生しました。');
         } finally {
             setLoginLoading(false);
         }
@@ -429,7 +429,8 @@ const SeaTreeEventAdmin: React.FC = () => {
 
             if (response.ok) {
                 const data: SeaTreeEventName[] = await response.json();
-                setEventNames(data);
+                const sortedData = data.sort((a, b) => a.id - b.id);
+                setEventNames(sortedData);
             } else {
                 showMessage('error', 'データの取得に失敗しました。');
             }
@@ -642,7 +643,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                 </svg>
                             </div>
-                            <h1 style={styles.headerTitle}>SeaTreeイベント管理</h1>
+                            <h1 style={styles.headerTitle}>樹海プレマ獲得ランキングレース管理画面</h1>
                         </div>
                         <div style={styles.userArea}>
                             <div style={styles.avatar}>
@@ -670,7 +671,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                     <div style={styles.card}>
                         <div style={styles.cardHeader}>
                             <div style={styles.cardTitle}>
-                                イベント名一覧
+                                集計対象CS
                                 <span style={styles.badge}>{eventNames.length}件</span>
                             </div>
                             <button
@@ -702,17 +703,12 @@ const SeaTreeEventAdmin: React.FC = () => {
                             <table style={styles.table}>
                                 <thead>
                                     <tr>
-                                        <th style={styles.th}>ID</th>
                                         <th style={styles.th}>イベント名</th>
-                                        <th style={{ ...styles.th, textAlign: 'right' }}>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {eventNames.map((event) => (
                                         <tr key={event.id} style={styles.tr}>
-                                            <td style={styles.td}>
-                                                <span style={styles.idBadge}>{event.id}</span>
-                                            </td>
                                             <td style={styles.td}>
                                                 {editingKey === event.id ? (
                                                     <input

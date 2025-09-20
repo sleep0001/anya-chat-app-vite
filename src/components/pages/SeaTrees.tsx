@@ -79,6 +79,7 @@ const SeaTrees = () => {
                     periodOptions={periodOptions}
                 />
             )}
+            <a href='https://www.sl33p.net/seatrees/admin'>管理者ログイン</a>
         </div>
     );
 };
