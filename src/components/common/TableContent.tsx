@@ -10,7 +10,7 @@ interface BaseTableItem {
 interface TableContentProps<T extends BaseTableItem> {
     data: T[];
     loading: boolean;
-    onEdit?: (id: number, newName: string) => Promise<boolean>;
+    onEdit?: (id: number, newName: string, isInclude: boolean) => Promise<boolean>;
     onDelete?: (id: number, name: string) => Promise<void>;
     emptyMessage?: string;
     tableHeader?: string;
@@ -28,6 +28,7 @@ const TableContent = <T extends BaseTableItem>({
 }: TableContentProps<T>): React.ReactElement => {
     const [editingKey, setEditingKey] = useState<number | null>(null);
     const [editingName, setEditingName] = useState<string>('');
+    const [editingInclude, setEditingInclude] = useState<boolean>(true);
 
     const styles: { [key: string]: React.CSSProperties } = {
         emptyState: {
@@ -136,11 +137,13 @@ const TableContent = <T extends BaseTableItem>({
     const startEdit = (item: T): void => {
         setEditingKey(item.id);
         setEditingName(item.name);
+        setEditingInclude(item.isInclude);
     };
 
     const cancelEdit = (): void => {
         setEditingKey(null);
         setEditingName('');
+        setEditingInclude(true);
     };
 
     const handleSave = async (id: number): Promise<void> => {
@@ -149,11 +152,12 @@ const TableContent = <T extends BaseTableItem>({
         }
 
         if (onEdit) {
-            const success = await onEdit(id, editingName.trim());
+            const success = await onEdit(id, editingName.trim(), editingInclude);
             if (success) {
                 // 成功時のみ編集状態をクリア
                 setEditingKey(null);
                 setEditingName('');
+                setEditingInclude(true);
             }
         }
     };

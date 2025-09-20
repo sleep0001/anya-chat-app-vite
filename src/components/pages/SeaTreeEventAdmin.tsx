@@ -33,7 +33,7 @@ const SeaTreeEventAdmin: React.FC = () => {
             try {
                 const session = JSON.parse(savedSession);
                 const now = new Date().getTime();
-
+                
                 if (session.expiresAt && now < session.expiresAt) {
                     setCredentials(session.credentials);
                     setIsAuthenticated(true);
@@ -365,7 +365,7 @@ const SeaTreeEventAdmin: React.FC = () => {
             if (response.ok) {
                 const data: SeaTreeEventName[] = await response.json();
                 const sortedData = data.sort((a, b) => a.id - b.id);
-                console.log(sortedData)
+                console.log('取得したデータ:', sortedData);
                 setEventNames(sortedData);
             } else if (response.status === 401) {
                 clearSession();
@@ -397,11 +397,11 @@ const SeaTreeEventAdmin: React.FC = () => {
             if (response.ok) {
                 setIsAuthenticated(true);
                 showMessage('success', 'ログインしました');
-
+                
                 if (rememberMe) {
                     saveSession(credentials, true);
                 }
-
+                
                 await loadEventNamesWithCredentials(credentials);
             } else if (response.status === 401) {
                 showMessage('error', '認証に失敗しました。ユーザー名とパスワードを確認してください。');
@@ -437,10 +437,10 @@ const SeaTreeEventAdmin: React.FC = () => {
                 headers: createAuthHeaders(),
                 body: JSON.stringify({ name: newEventName.trim(), isInclude: isInclude })
             });
-            console.log(response.json())
 
             if (response.ok) {
                 const newEvent: SeaTreeEventName = await response.json();
+                console.log('追加されたイベント:', newEvent);
                 setEventNames([...eventNames, newEvent].sort((a, b) => a.id - b.id));
                 setAddModalVisible(false);
                 setNewEventName('');
@@ -456,7 +456,7 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    const handleUpdate = async (id: number, newName: string): Promise<boolean> => {
+    const handleUpdate = async (id: number, newName: string, newIsInclude: boolean): Promise<boolean> => {
         if (!newName.trim()) {
             showMessage('error', 'イベント名を入力してください');
             return false;
@@ -468,11 +468,12 @@ const SeaTreeEventAdmin: React.FC = () => {
             const response = await fetch(`https://www.sl33p.net/api/player/admin/seatree-events/${id}`, {
                 method: 'PUT',
                 headers: createAuthHeaders(),
-                body: JSON.stringify({ name: newName.trim(), isInclude: isInclude })
+                body: JSON.stringify({ name: newName.trim(), isInclude: newIsInclude })
             });
 
             if (response.ok) {
                 const updatedEvent: SeaTreeEventName = await response.json();
+                console.log('更新されたイベント:', updatedEvent);
                 setEventNames(eventNames.map(event => event.id === id ? updatedEvent : event));
                 showMessage('success', 'イベント名を更新しました。');
                 return true;
@@ -507,7 +508,6 @@ const SeaTreeEventAdmin: React.FC = () => {
                 showMessage('error', errorText || '削除に失敗しました。');
             }
         } catch (error) {
-            console.log(error)
             showMessage('error', 'ネットワークエラーが発生しました。');
         } finally {
             setLoading(false);
