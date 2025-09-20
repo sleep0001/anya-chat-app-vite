@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 interface BaseTableItem {
     id: number;
     name: string;
-    include: boolean;
+    isInclude: boolean;
 }
 
 interface TableContentProps<T extends BaseTableItem> {
     data: T[];
     loading: boolean;
-    onEdit?: (id: number, newName: string, include: boolean) => Promise<boolean>;
+    onEdit?: (id: number, newName: string) => Promise<boolean>;
     onDelete?: (id: number, name: string) => Promise<void>;
     emptyMessage?: string;
     tableHeader?: string;
@@ -28,7 +28,6 @@ const TableContent = <T extends BaseTableItem>({
 }: TableContentProps<T>): React.ReactElement => {
     const [editingKey, setEditingKey] = useState<number | null>(null);
     const [editingName, setEditingName] = useState<string>('');
-    const [editingInclude, setEditingInclude] = useState<boolean>(true);
 
     const styles: { [key: string]: React.CSSProperties } = {
         emptyState: {
@@ -137,13 +136,11 @@ const TableContent = <T extends BaseTableItem>({
     const startEdit = (item: T): void => {
         setEditingKey(item.id);
         setEditingName(item.name);
-        setEditingInclude(item.include);
     };
 
     const cancelEdit = (): void => {
         setEditingKey(null);
         setEditingName('');
-        setEditingInclude(true);
     };
 
     const handleSave = async (id: number): Promise<void> => {
@@ -152,12 +149,11 @@ const TableContent = <T extends BaseTableItem>({
         }
 
         if (onEdit) {
-            const success = await onEdit(id, editingName.trim(), editingInclude);
+            const success = await onEdit(id, editingName.trim());
             if (success) {
                 // 成功時のみ編集状態をクリア
                 setEditingKey(null);
                 setEditingName('');
-                setEditingInclude(true);
             }
         }
     };
@@ -235,20 +231,6 @@ const TableContent = <T extends BaseTableItem>({
                                             onKeyDown={(e) => handleKeyDown(e, item.id)}
                                             autoFocus
                                         />
-                                        {showIncludeToggle && (
-                                            <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center' }}>
-                                                <input
-                                                    type="checkbox"
-                                                    id={`include-${item.id}`}
-                                                    checked={editingInclude}
-                                                    onChange={(e) => setEditingInclude(e.target.checked)}
-                                                    style={{ marginLeft: '12px', cursor: 'pointer' }}
-                                                />
-                                                <label htmlFor={`include-${item.id}`} style={{ marginLeft: '6px', fontSize: '14px', cursor: 'pointer' }}>
-                                                    集計に含める
-                                                </label>
-                                            </div>
-                                        )}
                                     </div>
                                 ) : (
                                     <div style={{ fontSize: '14px', fontWeight: '500', color: '#1f2937' }}>
@@ -256,9 +238,9 @@ const TableContent = <T extends BaseTableItem>({
                                         {showIncludeToggle && (
                                             <span style={{
                                                 ...styles.includeBadge,
-                                                ...(item.include ? styles.includeTrue : styles.includeFalse)
+                                                ...(item.isInclude ? styles.includeTrue : styles.includeFalse)
                                             }}>
-                                                {item.include ? '含む' : '除外'}
+                                                {item.isInclude ? '含む' : '除外'}
                                             </span>
                                         )}
                                     </div>

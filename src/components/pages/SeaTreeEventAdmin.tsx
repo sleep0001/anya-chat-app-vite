@@ -4,7 +4,7 @@ import TableContent from '../common/TableContent';
 interface SeaTreeEventName {
     id: number;
     name: string;
-    include: boolean;
+    isInclude: boolean;
 }
 
 interface Credentials {
@@ -65,11 +65,11 @@ const SeaTreeEventAdmin: React.FC = () => {
 
     // データをisIncludeで分離
     const includeList: SeaTreeEventName[] = useMemo(() => {
-        return eventNames.filter(item => item.include === true);
+        return eventNames.filter(item => item.isInclude === true);
     }, [eventNames]);
 
     const excludeList: SeaTreeEventName[] = useMemo(() => {
-        return eventNames.filter(item => item.include === false);
+        return eventNames.filter(item => item.isInclude === false);
     }, [eventNames]);
 
     const styles = {
@@ -365,6 +365,7 @@ const SeaTreeEventAdmin: React.FC = () => {
             if (response.ok) {
                 const data: SeaTreeEventName[] = await response.json();
                 const sortedData = data.sort((a, b) => a.id - b.id);
+                console.log(sortedData)
                 setEventNames(sortedData);
             } else if (response.status === 401) {
                 clearSession();
@@ -436,6 +437,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                 headers: createAuthHeaders(),
                 body: JSON.stringify({ name: newEventName.trim(), isInclude: isInclude })
             });
+            console.log(response.json())
 
             if (response.ok) {
                 const newEvent: SeaTreeEventName = await response.json();
@@ -454,7 +456,7 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    const handleUpdate = async (id: number, newName: string, isInclude: boolean): Promise<boolean> => {
+    const handleUpdate = async (id: number, newName: string): Promise<boolean> => {
         if (!newName.trim()) {
             showMessage('error', 'イベント名を入力してください');
             return false;
@@ -505,6 +507,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                 showMessage('error', errorText || '削除に失敗しました。');
             }
         } catch (error) {
+            console.log(error)
             showMessage('error', 'ネットワークエラーが発生しました。');
         } finally {
             setLoading(false);
@@ -649,7 +652,10 @@ const SeaTreeEventAdmin: React.FC = () => {
                                 <span style={styles.badge}>{includeList.length}件</span>
                             </div>
                             <button
-                                onClick={() => setAddModalVisible(true)}
+                                onClick={() => {
+                                    setAddModalVisible(true)
+                                    setIsInclude(true)
+                                }}
                                 style={styles.addButton}
                                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
                                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
@@ -679,7 +685,10 @@ const SeaTreeEventAdmin: React.FC = () => {
                                 <span style={styles.badge}>{excludeList.length}件</span>
                             </div>
                             <button
-                                onClick={() => setAddModalVisible(true)}
+                                onClick={() => {
+                                    setAddModalVisible(true)
+                                    setIsInclude(false)
+                                }}
                                 style={styles.addButton}
                                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
                                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
@@ -733,7 +742,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                                         キャンセル
                                     </button>
                                     <button
-                                        onClick={() => handleAdd(true)}
+                                        onClick={() => handleAdd(isInclude)}
                                         disabled={loading || !newEventName.trim()}
                                         style={{
                                             ...styles.addButton,
