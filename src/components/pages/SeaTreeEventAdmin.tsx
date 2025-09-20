@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface SeaTreeEventName {
     id: number;
@@ -9,6 +9,9 @@ interface Credentials {
     username: string;
     password: string;
 }
+
+// ローカルストレージのキー
+const STORAGE_KEY = 'seatree_admin_session';
 
 const SeaTreeEventAdmin: React.FC = () => {
     const [eventNames, setEventNames] = useState<SeaTreeEventName[]>([]);
@@ -21,8 +24,51 @@ const SeaTreeEventAdmin: React.FC = () => {
     const [addModalVisible, setAddModalVisible] = useState<boolean>(false);
     const [newEventName, setNewEventName] = useState<string>('');
     const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info', text: string } | null>(null);
+    const [rememberMe, setRememberMe] = useState<boolean>(false);
 
-    // スタイル定義
+    // コンポーネント初期化時にローカルストレージから認証情報を復元
+    useEffect(() => {
+        const savedSession = localStorage.getItem(STORAGE_KEY);
+        if (savedSession) {
+            try {
+                const session = JSON.parse(savedSession);
+                const now = new Date().getTime();
+                
+                // セッションの有効期限をチェック（24時間）
+                if (session.expiresAt && now < session.expiresAt) {
+                    setCredentials(session.credentials);
+                    setIsAuthenticated(true);
+                    setRememberMe(true);
+                    // 自動でデータを読み込む
+                    loadEventNamesWithCredentials(session.credentials);
+                } else {
+                    // 期限切れの場合はクリア
+                    localStorage.removeItem(STORAGE_KEY);
+                }
+            } catch (error) {
+                console.error('セッション復元エラー:', error);
+                localStorage.removeItem(STORAGE_KEY);
+            }
+        }
+    }, []);
+
+    // ログイン状態をローカルストレージに保存
+    const saveSession = (creds: Credentials, remember: boolean) => {
+        if (remember) {
+            const session = {
+                credentials: creds,
+                expiresAt: new Date().getTime() + (24 * 60 * 60 * 1000) // 24時間後
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+        }
+    };
+
+    // セッションクリア
+    const clearSession = () => {
+        localStorage.removeItem(STORAGE_KEY);
+    };
+
+    // スタイル定義（省略 - 既存のstylesオブジェクトをそのまま使用）
     const styles = {
         container: {
             minHeight: '100vh',
@@ -263,6 +309,25 @@ const SeaTreeEventAdmin: React.FC = () => {
             transition: 'all 0.2s',
             marginLeft: '8px'
         },
+        checkboxGroup: {
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '24px',
+            gap: '8px'
+        },
+        checkbox: {
+            width: '18px',
+            height: '18px',
+            cursor: 'pointer'
+        },
+        
+        checkboxLabel: {
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            marginLeft: '8px'
+        },
         editButton: {
             backgroundColor: '#3b82f6',
             color: 'white'
@@ -377,10 +442,40 @@ const SeaTreeEventAdmin: React.FC = () => {
     };
 
     // Basic認証ヘッダーの生成
-    const createAuthHeaders = (): Record<string, string> => ({
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(`${credentials.username}:${credentials.password}`)}`
-    });
+    const createAuthHeaders = (creds?: Credentials): Record<string, string> => {
+        const useCreds = creds || credentials;
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa(`${useCreds.username}:${useCreds.password}`)}`
+        };
+    };
+
+    // 指定した認証情報でイベント名を読み込み
+    const loadEventNamesWithCredentials = async (creds: Credentials): Promise<void> => {
+        setLoading(true);
+        try {
+            const response = await fetch('https://www.sl33p.net/api/player/admin/seatree-events', {
+                headers: createAuthHeaders(creds)
+            });
+
+            if (response.ok) {
+                const data: SeaTreeEventName[] = await response.json();
+                const sortedData = data.sort((a, b) => a.id - b.id);
+                setEventNames(sortedData);
+            } else if (response.status === 401) {
+                // 認証エラーの場合はセッションをクリア
+                clearSession();
+                setIsAuthenticated(false);
+                showMessage('error', 'セッションの有効期限が切れました。再ログインしてください。');
+            } else {
+                showMessage('error', 'データの取得に失敗しました。');
+            }
+        } catch (error) {
+            showMessage('error', 'ネットワークエラーが発生しました。');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // ログイン処理
     const handleLogin = async (): Promise<void> => {
@@ -399,7 +494,13 @@ const SeaTreeEventAdmin: React.FC = () => {
             if (response.ok) {
                 setIsAuthenticated(true);
                 showMessage('success', 'ログインしました');
-                await loadEventNames();
+                
+                // ログイン状態を保存
+                if (rememberMe) {
+                    saveSession(credentials, true);
+                }
+                
+                await loadEventNamesWithCredentials(credentials);
             } else if (response.status === 401) {
                 showMessage('error', '認証に失敗しました。ユーザー名とパスワードを確認してください。');
             } else {
@@ -412,33 +513,14 @@ const SeaTreeEventAdmin: React.FC = () => {
         }
     };
 
-    // その他の関数（変更なし）
+    // ログアウト処理
     const handleLogout = (): void => {
         setIsAuthenticated(false);
         setCredentials({ username: '', password: '' });
         setEventNames([]);
+        setRememberMe(false);
+        clearSession();
         showMessage('info', 'ログアウトしました');
-    };
-
-    const loadEventNames = async (): Promise<void> => {
-        setLoading(true);
-        try {
-            const response = await fetch('https://www.sl33p.net/api/player/admin/seatree-events', {
-                headers: createAuthHeaders()
-            });
-
-            if (response.ok) {
-                const data: SeaTreeEventName[] = await response.json();
-                const sortedData = data.sort((a, b) => a.id - b.id);
-                setEventNames(sortedData);
-            } else {
-                showMessage('error', 'データの取得に失敗しました。');
-            }
-        } catch (error) {
-            showMessage('error', 'ネットワークエラーが発生しました。');
-        } finally {
-            setLoading(false);
-        }
     };
 
     const handleAdd = async (): Promise<void> => {
@@ -457,7 +539,7 @@ const SeaTreeEventAdmin: React.FC = () => {
 
             if (response.ok) {
                 const newEvent: SeaTreeEventName = await response.json();
-                setEventNames([...eventNames, newEvent]);
+                setEventNames([...eventNames, newEvent].sort((a, b) => a.id - b.id));
                 setAddModalVisible(false);
                 setNewEventName('');
                 showMessage('success', 'イベント名を追加しました。');
@@ -556,70 +638,75 @@ const SeaTreeEventAdmin: React.FC = () => {
     // ログインフォーム
     if (!isAuthenticated) {
         return (
-            <>
-                <style>{`
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                `}</style>
-                <div style={styles.container}>
-                    <div style={styles.loginCard}>
-                        <div style={styles.header}>
-                            <div style={styles.icon}>
-                                <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                </svg>
-                            </div>
-                            <h1 style={styles.title}>管理者ログイン</h1>
-                            <p style={styles.subtitle}>SeaTreeイベント名管理システム</p>
+            <div style={styles.container}>
+                <div style={styles.loginCard}>
+                    <div style={styles.header}>
+                        <div style={styles.icon}>
+                            <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
                         </div>
-
-                        <MessageAlert />
-
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>ユーザー名</label>
-                            <input
-                                type="text"
-                                value={credentials.username}
-                                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                                style={styles.input}
-                                placeholder="ユーザー名を入力"
-                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                            />
-                        </div>
-
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>パスワード</label>
-                            <input
-                                type="password"
-                                value={credentials.password}
-                                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                                style={styles.input}
-                                placeholder="パスワードを入力"
-                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                            />
-                        </div>
-
-                        <button
-                            onClick={handleLogin}
-                            disabled={loginLoading}
-                            style={{
-                                ...styles.button,
-                                ...(loginLoading ? styles.buttonDisabled : {})
-                            }}
-                        >
-                            {loginLoading ? 'ログイン中...' : 'ログイン'}
-                        </button>
+                        <h1 style={styles.title}>管理者ログイン</h1>
+                        <p style={styles.subtitle}>SeaTreeイベント名管理システム</p>
                     </div>
+
+                    <MessageAlert />
+
+                    <div style={styles.inputGroup}>
+                        <label style={styles.label}>ユーザー名</label>
+                        <input
+                            type="text"
+                            value={credentials.username}
+                            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                            style={styles.input}
+                            placeholder="ユーザー名を入力"
+                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                        />
+                    </div>
+
+                    <div style={styles.inputGroup}>
+                        <label style={styles.label}>パスワード</label>
+                        <input
+                            type="password"
+                            value={credentials.password}
+                            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                            style={styles.input}
+                            placeholder="パスワードを入力"
+                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                        />
+                    </div>
+
+                    <div style={styles.checkboxGroup}>
+                        <input
+                            type="checkbox"
+                            id="rememberMe"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            style={styles.checkbox}
+                        />
+                        <label htmlFor="rememberMe" style={styles.checkboxLabel}>
+                            ログイン状態を保持する（24時間）
+                        </label>
+                    </div>
+
+                    <button
+                        onClick={handleLogin}
+                        disabled={loginLoading}
+                        style={{
+                            ...styles.button,
+                            ...(loginLoading ? styles.buttonDisabled : {})
+                        }}
+                    >
+                        {loginLoading ? 'ログイン中...' : 'ログイン'}
+                    </button>
                 </div>
-            </>
+            </div>
         );
     }
 
-    // メイン管理画面
+    // メイン管理画面（既存のコードと同様だが、ログアウト処理が更新されている）
     return (
-        <>
+        <div>
             <style>{`
                 @keyframes spin {
                     0% { transform: rotate(0deg); }
@@ -643,7 +730,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                 </svg>
                             </div>
-                            <h1 style={styles.headerTitle}>樹海プレマ獲得ランキングレース管理画面</h1>
+                            <h1 style={styles.headerTitle}>管理画面</h1>
                         </div>
                         <div style={styles.userArea}>
                             <div style={styles.avatar}>
@@ -830,7 +917,7 @@ const SeaTreeEventAdmin: React.FC = () => {
                     </div>
                 )}
             </div>
-        </>
+        </div>
     );
 };
 
