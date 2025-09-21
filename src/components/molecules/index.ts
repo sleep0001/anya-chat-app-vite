@@ -14,3 +14,5 @@ export type { MessageInputProps } from './MessageInput/MessageInput';
 
 export { default as SearchBox } from './SearchBox/SearchBox';
 export type { SearchBoxProps } from './SearchBox/SearchBox';
+
+export { default as PrefectureSelector } from './PrefectureSelector/PrefectureSelector';

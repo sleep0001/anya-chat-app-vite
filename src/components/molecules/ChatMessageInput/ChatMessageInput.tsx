@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageInput } from '../MessageInput/MessageInput';
+import MessageInput from '../MessageInput/MessageInput';
 import { useWebSocket } from '../../../hooks/useWebSocket';
 
 export interface ChatMessageInputProps {

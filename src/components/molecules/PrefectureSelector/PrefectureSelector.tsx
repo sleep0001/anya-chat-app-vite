@@ -1,5 +1,5 @@
 import React from 'react';
-import { Selector, SelectorOption } from '../Selector/Selector';
+import { StringSelector } from '../Selector/Selector';
 
 interface PrefectureSelectorProps {
     value?: string;
@@ -27,16 +27,16 @@ const PrefectureSelector: React.FC<PrefectureSelectorProps> = ({
     required = false,
     error,
 }) => {
-    const options: SelectorOption[] = PREFECTURES.map(prefecture => ({
+    const options = PREFECTURES.map(prefecture => ({
         value: prefecture,
         label: prefecture,
     }));
 
     return (
-        <Selector
+        <StringSelector
             label={label}
             value={value || ""}
-            onChange={(selectedValue) => onChange(selectedValue as string)}
+            onChange={onChange}
             options={options}
             placeholder="都道府県を選択"
             allowClear={true}
