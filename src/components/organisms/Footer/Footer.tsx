@@ -29,6 +29,10 @@ export interface FooterProps {
     height?: string | number;
     /** 中央寄せにするか */
     centered?: boolean;
+    /** アプリバージョン */
+    version?: string;
+    /** バージョン表示するか */
+    showVersion?: boolean;
     /** カスタムスタイル */
     style?: React.CSSProperties;
     /** 子要素 */
@@ -42,9 +46,11 @@ const Footer: React.FC<FooterProps> = ({
     links = [],
     backgroundColor = "#f4b3bb",
     textColor = "white",
-    linkColor = "#ffffff",
+    linkColor = "#ffffffff",
     height = "10vh",
     centered = true,
+    version = "v1.0.0",
+    showVersion = true,
     style,
     children,
 }) => {
@@ -54,15 +60,19 @@ const Footer: React.FC<FooterProps> = ({
         color: textColor,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: centered ? 'center' : 'flex-start',
-        textAlign: centered ? 'center' : 'left',
+        justifyContent: 'center',
+        textAlign: 'center',
         padding: '16px 24px',
+        position: 'relative', // バージョン表示のために追加
         ...style,
     };
 
     const contentStyle: React.CSSProperties = {
         width: '100%',
         maxWidth: '1200px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: centered ? 'center' : 'flex-start',
     };
 
     const linksStyle: React.CSSProperties = {
@@ -78,6 +88,17 @@ const Footer: React.FC<FooterProps> = ({
         textDecoration: 'none',
         fontSize: '14px',
         transition: 'opacity 0.3s ease',
+    };
+
+    // バージョン表示のスタイル
+    const versionStyle: React.CSSProperties = {
+        position: 'absolute',
+        bottom: '8px',
+        right: '16px',
+        fontSize: '12px',
+        color: textColor,
+        opacity: 0.7,
+        fontFamily: 'monospace',
     };
 
     const defaultCopyright = copyrightText || `© ${year} ${organizationName}.`;
@@ -121,6 +142,13 @@ const Footer: React.FC<FooterProps> = ({
                     </>
                 )}
             </div>
+            
+            {/* バージョン表示 */}
+            {showVersion && (
+                <div style={versionStyle}>
+                    {version}
+                </div>
+            )}
         </AntdFooter>
     );
 };

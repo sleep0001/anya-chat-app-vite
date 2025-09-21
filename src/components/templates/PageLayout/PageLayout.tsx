@@ -28,22 +28,11 @@ export interface PageLayoutProps {
 
 const PageLayout: React.FC<PageLayoutProps> = ({
     navigationItems = [
-        {
-            key: '1',
-            label: 'Home',
-            path: '/',
-        },
-        {
-            key: 'sub2',
-            label: 'More',
-            path: '/more',
-            children: [
-                { key: '2', label: 'DMP Ranking', path: '/rank' },
-                { key: '3', label: 'アニャマス県ランキング', path: '/dm' },
-                { key: '4', label: '樹海CS', path: '/seatrees' },
-                { key: '5', label: 'ワンピ検索', path: '/card' }
-            ],
-        },
+        { key: '1', label: 'Home', path: '/', },
+        { key: '2', label: 'DMP Ranking', path: '/rank', },
+        { key: '3', label: 'アニャマス県ランキング', path: '/dm', },
+        { key: '4', label: '樹海CS', path: '/seatrees', },
+        // { key: '5', label: 'ワンピ検索', path: '/card', },
     ],
     footerLinks = [],
     hideFooterOnPaths = ['/room'],
@@ -148,7 +137,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
                 logoPath="/"
                 items={navigationItems}
                 themeColor={themeColor}
-                textColor="#ffffff"
+                textColor="#402b28"
                 hoverTextColor="#402b28"
                 height="auto" // 高さを自動に変更
                 style={{ margin: 0, padding: 0 }} // 明示的にマージン・パディングをリセット
@@ -164,7 +153,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({
                 <Footer
                     organizationName="a-nya developer alliance"
                     backgroundColor={themeColor}
-                    textColor="white"
+                    textColor="#402B28"
+                    version="v1.4.0"
                     links={footerLinks}
                     height="10vh"
                     style={{ margin: 0 }} // 明示的にマージンをリセット

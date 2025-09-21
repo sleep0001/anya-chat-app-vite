@@ -39,7 +39,7 @@ const Navigation: React.FC<NavigationProps> = ({
     logoPath = "/",
     items,
     themeColor = "#f4b3bb",
-    textColor = "#ffffff",
+    textColor = "#402b28",
     hoverTextColor = "#402b28",
     height = "auto", // デフォルトを"auto"に変更
     backgroundColor,
