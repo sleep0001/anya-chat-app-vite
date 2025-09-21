@@ -4,21 +4,22 @@ import { Text } from '../../atoms';
 
 const { Option } = Select;
 
-export interface SelectorOption {
-    value: string | number;
+export interface SelectorOption<T = string | number> {
+    value: T;
     label: string;
     disabled?: boolean;
 }
 
-export interface SelectorProps {
+// 基本のSelectorProps（ジェネリック対応）
+export interface SelectorProps<T = string | number> {
     /** ラベル */
     label?: string;
     /** 値 */
-    value?: string | number;
+    value?: T;
     /** 変更ハンドラー */
-    onChange: (value: string | number) => void;
+    onChange: (value: T) => void;
     /** 選択肢 */
-    options: SelectorOption[];
+    options: SelectorOption<T>[];
     /** プレースホルダー */
     placeholder?: string;
     /** 空の選択肢を表示するか */
@@ -42,9 +43,9 @@ export interface SelectorProps {
     /** 複数選択 */
     multiple?: boolean;
     /** 複数選択時の値 */
-    multipleValue?: (string | number)[];
+    multipleValue?: T[];
     /** 複数選択時の変更ハンドラー */
-    onMultipleChange?: (value: (string | number)[]) => void;
+    onMultipleChange?: (value: T[]) => void;
 }
 
 // 文字列専用のSelectorProps
@@ -85,7 +86,7 @@ export interface StringSelectorProps {
     onMultipleChange?: (value: string[]) => void;
 }
 
-const Selector: React.FC<SelectorProps> = ({
+const Selector = <T extends string | number = string | number>({
     label,
     value,
     onChange,
@@ -103,7 +104,7 @@ const Selector: React.FC<SelectorProps> = ({
     multiple = false,
     multipleValue,
     onMultipleChange,
-}) => {
+}: SelectorProps<T>): React.ReactElement => {
     // サイズマッピング
     const sizeMap = {
         small: 'small' as const,
@@ -111,7 +112,7 @@ const Selector: React.FC<SelectorProps> = ({
         large: 'large' as const,
     };
 
-    const handleChange = (selectedValue: string | number | (string | number)[]) => {
+    const handleChange = (selectedValue: T | T[]) => {
         if (multiple && onMultipleChange && Array.isArray(selectedValue)) {
             onMultipleChange(selectedValue);
         } else if (!multiple && onChange && !Array.isArray(selectedValue)) {
@@ -153,11 +154,11 @@ const Selector: React.FC<SelectorProps> = ({
                 status={error ? 'error' : undefined}
             >
                 {allowClear && !multiple && (
-                    <Option value="">{clearLabel}</Option>
+                    <Option value={'' as T}>{clearLabel}</Option>
                 )}
                 {options.map((option) => (
                     <Option 
-                        key={option.value} 
+                        key={String(option.value)} 
                         value={option.value}
                         disabled={option.disabled}
                     >

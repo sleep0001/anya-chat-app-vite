@@ -18,3 +18,9 @@ export { default as Icon } from './Icon/Icon.tsx';
 export type { IconProps, IconName } from './Icon/Icon.tsx';
 
 export { default as OnePieceCard } from './OnePieceCard/OnePieceCard.tsx';
+
+export { default as Loading } from './Loading/Loading.tsx';
+export type { LoadingProps } from './Loading/Loading.tsx';
+
+export { default as ErrorDisplay } from './ErrorDisplay/ErrorDisplay.tsx';
+export type { ErrorDisplayProps } from './ErrorDisplay/ErrorDisplay.tsx';

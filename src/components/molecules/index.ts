@@ -1,11 +1,12 @@
 // Molecules
-export { default as Selector } from './Selector/Selector';
-export type { SelectorProps, SelectorOption } from './Selector/Selector';
+export { default as Selector, StringSelector } from './Selector/Selector';
+export type { SelectorProps, SelectorOption, StringSelectorProps } from './Selector/Selector';
 
 export { default as Card } from './Card/Card';
 export type { CardProps } from './Card/Card';
 
 export { default as ChatMessageInput } from './ChatMessageInput/ChatMessageInput';
+export type { ChatMessageInputProps } from './ChatMessageInput/ChatMessageInput';
 
 export { default as LobbyActions } from './LobbyActions/LobbyActions';
 

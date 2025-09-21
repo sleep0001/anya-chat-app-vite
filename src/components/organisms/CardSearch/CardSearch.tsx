@@ -61,19 +61,25 @@ const CardSearch: React.FC<CardSearchProps> = ({
     const { setCards } = useContexts();
 
     // 選択肢の定義
-    const expansionOptions: SelectorOption[] = [
-        ...Array.from({ length: 11 }, (_, i) => ({ value: `OP${String(i + 1).padStart(2, '0')}`, label: `OP${String(i + 1).padStart(2, '0')}` })),
-        ...Array.from({ length: 20 }, (_, i) => ({ value: `ST${String(i + 1).padStart(2, '0')}`, label: `ST${String(i + 1).padStart(2, '0')}` }))
+    const expansionOptions: SelectorOption<string>[] = [
+        ...Array.from({ length: 11 }, (_, i) => ({ 
+            value: `OP${String(i + 1).padStart(2, '0')}`, 
+            label: `OP${String(i + 1).padStart(2, '0')}` 
+        })),
+        ...Array.from({ length: 20 }, (_, i) => ({ 
+            value: `ST${String(i + 1).padStart(2, '0')}`, 
+            label: `ST${String(i + 1).padStart(2, '0')}` 
+        }))
     ];
 
-    const typeOptions: SelectorOption[] = [
+    const typeOptions: SelectorOption<CardType>[] = [
         { value: "Leader", label: "リーダー" },
         { value: "Character", label: "キャラクター" },
         { value: "Event", label: "イベント" },
         { value: "Stage", label: "ステージ" }
     ];
 
-    const colorOptions: SelectorOption[] = [
+    const colorOptions: SelectorOption<string>[] = [
         { value: "赤", label: "🔴 赤" },
         { value: "青", label: "🔵 青" },
         { value: "緑", label: "🟢 緑" },
@@ -82,13 +88,13 @@ const CardSearch: React.FC<CardSearchProps> = ({
         { value: "黄", label: "🟡 黄" }
     ];
 
-    const featureOptions: SelectorOption[] = [
+    const featureOptions: SelectorOption<string>[] = [
         { value: "麦わらの一味", label: "麦わらの一味" },
         { value: "海軍", label: "海軍" },
         { value: "動物", label: "動物" }
     ];
 
-    const attributeOptions: SelectorOption[] = [
+    const attributeOptions: SelectorOption<string>[] = [
         { value: "打", label: "打撃" },
         { value: "斬", label: "斬撃" },
         { value: "射", label: "射撃" }
@@ -118,6 +124,27 @@ const CardSearch: React.FC<CardSearchProps> = ({
             attributes: []
         };
         setFormState(resetState);
+    };
+
+    // 型安全な更新ヘルパー関数
+    const updateExpansions = (expansions: string[]) => {
+        setFormState({ ...formState, expansions });
+    };
+
+    const updateTypes = (types: CardType[]) => {
+        setFormState({ ...formState, types });
+    };
+
+    const updateColors = (colors: string[]) => {
+        setFormState({ ...formState, colors });
+    };
+
+    const updateFeatures = (features: string[]) => {
+        setFormState({ ...formState, features });
+    };
+
+    const updateAttributes = (attributes: string[]) => {
+        setFormState({ ...formState, attributes });
     };
 
     const containerStyle: React.CSSProperties = {
@@ -220,22 +247,22 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                     label="収録弾"
                                     multiple={true}
                                     multipleValue={formState.expansions}
-                                    onMultipleChange={(expansions) => setFormState({ ...formState, expansions: expansions as string[] })}
+                                    onMultipleChange={updateExpansions}
                                     options={expansionOptions}
                                     placeholder="収録弾を選択"
                                     width="100%"
-                                    onChange={() => {}} // 空の関数で警告を回避
+                                    onChange={() => {}} // multipleが有効な場合は使用されない
                                 />
 
                                 <Selector
                                     label="カードタイプ"
                                     multiple={true}
                                     multipleValue={formState.types}
-                                    onMultipleChange={(types) => setFormState({ ...formState, types: types as CardType[] })}
+                                    onMultipleChange={updateTypes}
                                     options={typeOptions}
                                     placeholder="タイプを選択"
                                     width="100%"
-                                    onChange={() => {}} // 空の関数で警告を回避
+                                    onChange={() => {}} // multipleが有効な場合は使用されない
                                 />
                             </div>
                         </Space>
@@ -255,33 +282,33 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                 label="カラー"
                                 multiple={true}
                                 multipleValue={formState.colors}
-                                onMultipleChange={(colors) => setFormState({ ...formState, colors: colors as string[] })}
+                                onMultipleChange={updateColors}
                                 options={colorOptions}
                                 placeholder="カラーを選択"
                                 width="100%"
-                                onChange={() => {}} // 空の関数で警告を回避
+                                onChange={() => {}} // multipleが有効な場合は使用されない
                             />
 
                             <Selector
                                 label="特徴"
                                 multiple={true}
                                 multipleValue={formState.features}
-                                onMultipleChange={(features) => setFormState({ ...formState, features: features as string[] })}
+                                onMultipleChange={updateFeatures}
                                 options={featureOptions}
                                 placeholder="特徴を選択"
                                 width="100%"
-                                onChange={() => {}} // 空の関数で警告を回避
+                                onChange={() => {}} // multipleが有効な場合は使用されない
                             />
 
                             <Selector
                                 label="属性"
                                 multiple={true}
                                 multipleValue={formState.attributes}
-                                onMultipleChange={(attributes) => setFormState({ ...formState, attributes: attributes as string[] })}
+                                onMultipleChange={updateAttributes}
                                 options={attributeOptions}
                                 placeholder="属性を選択"
                                 width="100%"
-                                onChange={() => {}} // 空の関数で警告を回避
+                                onChange={() => {}} // multipleが有効な場合は使用されない
                             />
                         </div>
                     </Panel>
