@@ -16,3 +16,5 @@ export type { BadgeProps } from './Badge/Badge.tsx';
 
 export { default as Icon } from './Icon/Icon.tsx';
 export type { IconProps, IconName } from './Icon/Icon.tsx';
+
+export { default as OnePieceCard } from './OnePieceCard/OnePieceCard.tsx';
