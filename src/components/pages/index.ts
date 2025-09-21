@@ -1,4 +1,4 @@
-// Pages
+// Pages - アトミックデザイン準拠のページコンポーネント
 export { default as HomePage } from './HomePage/HomePage';
 export type { HomePageProps } from './HomePage/HomePage';
 
@@ -13,3 +13,6 @@ export type { RankingLatestPageProps } from './RankingLatestPage/RankingLatestPa
 
 export { default as SeaTreesPage } from './SeaTreesPage/SeaTreesPage';
 export type { SeaTreesPageProps } from './SeaTreesPage/SeaTreesPage';
+
+// 管理者ページ
+export { default as SeaTreeEventAdmin } from './SeaTreeEventAdmin';

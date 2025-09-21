@@ -14,14 +14,11 @@ export { default as PageLayout } from './templates/PageLayout/PageLayout';
 export type { PageLayoutProps } from './templates/PageLayout/PageLayout';
 
 // Pages
-export { default as RankingLatestPage } from './pages/RankingLatestPage/RankingLatestPage';
-export { default as HomePage } from './pages/HomePage/HomePage';
-export { default as CardSearchPage } from './pages/CardSearchPage/CardSearchPage';
-export { default as SeaTreesPage } from './pages/SeaTreesPage/SeaTreesPage';
-
-// Templates (legacy support)
-export { default as DmpRankingPage } from './templates/DmpRankingPage/DmpRankingPage';
+export * from './pages';
 
 // Legacy Components (Backward Compatibility)
-// これらは段階的にアトミックデザインの新しいコンポーネントに置き換える予定
+// 段階的に削除予定 - DmpRankingPage は templates/DmpRankingPage を使用
+export { default as DmpRankingPage } from './templates/DmpRankingPage/DmpRankingPage';
+
+// Error Boundary (共通コンポーネント)
 export { default as ErrorBoundary } from './ErrorBoundary';
