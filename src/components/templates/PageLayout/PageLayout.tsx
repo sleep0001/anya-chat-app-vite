@@ -1,3 +1,4 @@
+// src/components/templates/PageLayout/PageLayout.tsx
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navigation, Footer, NavigationItem, FooterLink } from '../../organisms';
@@ -69,6 +70,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({
         backgroundImage: backgroundImage ? `url('${backgroundImage}')` : undefined,
         backgroundRepeat: "repeat",
         backgroundColor,
+        margin: 0, // 追加：外側のマージンをリセット
+        padding: 0, // 追加：外側のパディングをリセット
         ...style,
     };
 
@@ -87,18 +90,42 @@ const PageLayout: React.FC<PageLayoutProps> = ({
         const styleTag = document.createElement('style');
         styleTag.id = styleId;
         styleTag.innerHTML = `
+            /* レイアウト全体のリセット */
+            .ant-layout {
+                background: transparent !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* ヘッダーのスタイル調整 */
+            .ant-layout-header {
+                margin: 0 !important;
+                padding: 0 15px !important;
+                line-height: normal !important;
+                height: auto !important;
+            }
+            
+            /* メインコンテンツのスタイル */
             .page-layout-main {
                 flex: 1;
                 background-color: ${contentBackgroundColor};
                 width: ${maxContentWidth};
                 margin: 0 auto;
                 padding: ${contentPadding};
+                margin-top: 0 !important; /* 追加：上部マージンを明示的にリセット */
+            }
+            
+            /* フッターのスタイル調整 */
+            .ant-layout-footer {
+                margin: 0 !important;
+                padding: 16px 24px !important;
             }
             
             @media screen and (max-width: 480px) {
                 .page-layout-main {
                     width: 95% !important;
                     padding: 10px 0 20px !important;
+                    margin-top: 0 !important;
                 }
             }
         `;
@@ -115,7 +142,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
 
     return (
         <div style={layoutStyle}>
-            {/* ヘッダー */}
+            {/* ヘッダー - Navigationコンポーネントを直接使用 */}
             <Navigation
                 logoText="NYA"
                 logoPath="/"
@@ -123,6 +150,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({
                 themeColor={themeColor}
                 textColor="#ffffff"
                 hoverTextColor="#402b28"
+                height="auto" // 高さを自動に変更
+                style={{ margin: 0, padding: 0 }} // 明示的にマージン・パディングをリセット
             />
 
             {/* メインコンテンツ */}
@@ -137,6 +166,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({
                     backgroundColor={themeColor}
                     textColor="white"
                     links={footerLinks}
+                    height="10vh"
+                    style={{ margin: 0 }} // 明示的にマージンをリセット
                 />
             )}
         </div>

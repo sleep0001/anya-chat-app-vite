@@ -1,3 +1,4 @@
+// src/components/organisms/Navigation/Navigation.tsx
 import React from 'react';
 import { Layout, Menu, MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
@@ -40,7 +41,7 @@ const Navigation: React.FC<NavigationProps> = ({
     themeColor = "#f4b3bb",
     textColor = "#ffffff",
     hoverTextColor = "#402b28",
-    height = "10vh",
+    height = "auto", // デフォルトを"auto"に変更
     backgroundColor,
     style,
 }) => {
@@ -75,12 +76,15 @@ const Navigation: React.FC<NavigationProps> = ({
     };
 
     const headerStyle: React.CSSProperties = {
-        height,
+        height: height === "auto" ? "auto" : height,
+        minHeight: "64px", // 最小高さを設定
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '0 15px',
         backgroundColor: backgroundColor || themeColor,
+        margin: 0, // 明示的にマージンをリセット
+        lineHeight: 'normal', // line-heightをnormalに設定
         ...style,
     };
 
@@ -97,6 +101,8 @@ const Navigation: React.FC<NavigationProps> = ({
         border: 'none',
         borderRadius: '6px',
         overflow: 'hidden',
+        height: 'auto', // メニューの高さも自動に
+        lineHeight: 'normal', // line-heightをnormalに設定
     };
 
     // 動的スタイルの注入
@@ -106,6 +112,9 @@ const Navigation: React.FC<NavigationProps> = ({
             .navigation-menu.ant-menu-horizontal > .ant-menu-item,
             .navigation-menu.ant-menu-horizontal > .ant-menu-submenu {
                 color: ${textColor} !important;
+                line-height: normal !important;
+                height: auto !important;
+                padding: 12px 16px !important;
             }
             
             .navigation-menu.ant-menu-horizontal > .ant-menu-item:hover,
@@ -124,8 +133,19 @@ const Navigation: React.FC<NavigationProps> = ({
                 transform: none !important;
             }
             
-            .navigation-menu {
+            .navigation-menu.ant-menu-horizontal {
                 background-color: transparent !important;
+                border-bottom: none !important;
+                line-height: normal !important;
+            }
+            
+            /* Antdの Layout.Header のスタイルをリセット */
+            .ant-layout-header.navigation-header {
+                margin: 0 !important;
+                padding: 0 15px !important;
+                line-height: normal !important;
+                height: auto !important;
+                min-height: 64px !important;
             }
         `;
         document.head.appendChild(styleElement);
@@ -136,35 +156,33 @@ const Navigation: React.FC<NavigationProps> = ({
     }, [textColor, hoverTextColor]);
 
     return (
-        <Layout>
-            <Header style={headerStyle}>
-                <div>
-                    <Link 
-                        to={logoPath} 
-                        style={logoStyle}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.color = hoverTextColor;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.color = textColor;
-                        }}
-                    >
-                        <Text variant="h5" weight="bold" color={textColor}>
-                            {logoText}
-                        </Text>
-                    </Link>
-                </div>
-                
-                <Menu
-                    theme="light"
-                    mode="horizontal"
-                    className="navigation-menu"
-                    selectedKeys={getSelectedKeys()}
-                    items={convertToMenuItems(items)}
-                    style={menuStyle}
-                />
-            </Header>
-        </Layout>
+        <Header className="navigation-header" style={headerStyle}>
+            <div>
+                <Link 
+                    to={logoPath} 
+                    style={logoStyle}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.color = hoverTextColor;
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.color = textColor;
+                    }}
+                >
+                    <Text variant="h5" weight="bold" color={textColor}>
+                        {logoText}
+                    </Text>
+                </Link>
+            </div>
+            
+            <Menu
+                theme="light"
+                mode="horizontal"
+                className="navigation-menu"
+                selectedKeys={getSelectedKeys()}
+                items={convertToMenuItems(items)}
+                style={menuStyle}
+            />
+        </Header>
     );
 };
 
