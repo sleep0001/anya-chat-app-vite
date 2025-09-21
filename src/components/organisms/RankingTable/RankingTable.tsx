@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { Text, Icon, Badge } from '../../atoms';
 
 export interface RankingPlayer {
@@ -31,7 +31,7 @@ export interface RankingTableProps {
     /** 最大表示件数 */
     maxItems?: number;
     /** ページネーション */
-    pagination?: boolean;
+    pagination?: false | TablePaginationConfig;
     /** テーマカラー */
     themeColor?: string;
     /** カスタムカラム */
@@ -103,11 +103,6 @@ const RankingTable: React.FC<RankingTableProps> = ({
             ? (isPositive ? 'arrow-up' : 'arrow-down')
             : (isPositive ? 'arrow-up' : 'arrow-down');
         
-        // ランキングの場合、上昇は順位が上がる（数字が小さくなる）ので色を逆転
-        const color = isRank 
-            ? (isPositive ? '#ff4d4f' : '#52c41a') 
-            : (isPositive ? '#52c41a' : '#ff4d4f');
-        
         return (
             <Badge 
                 variant={isRank ? (isPositive ? 'error' : 'success') : (isPositive ? 'success' : 'error')}
@@ -118,106 +113,108 @@ const RankingTable: React.FC<RankingTableProps> = ({
         );
     };
 
-    // 基本カラム
-    const baseColumns: ColumnsType<RankingPlayer> = [
-        {
-            title: '順位',
-            dataIndex: 'rank',
-            key: 'rank',
-            width: 80,
-            align: 'center',
-            render: renderRank,
-            sorter: (a, b) => a.rank - b.rank,
-        },
-        {
-            title: 'プレイヤー名',
-            dataIndex: 'name',
-            key: 'name',
-            align: 'center',
-            render: (name: string) => (
-                <Text variant="body1" weight="semibold" color="#1f2937">
-                    {name}
-                </Text>
-            ),
-        },
-    ];
-
-    // 都道府県カラム
-    if (showPrefecture) {
-        baseColumns.push({
-            title: '都道府県',
-            dataIndex: 'prefecture',
-            key: 'prefecture',
-            align: 'center',
-            render: (prefecture: string) => (
-                <Text variant="body2" color="secondary">
-                    {prefecture || '-'}
-                </Text>
-            ),
-        });
-    }
-
-    // ポイントカラム
-    baseColumns.push({
-        title: 'ポイント',
-        dataIndex: 'point',
-        key: 'point',
-        align: 'center',
-        render: (point: number) => (
-            <Text variant="body1" weight="bold" color="#1b5e20">
-                {point.toLocaleString()} pt
-            </Text>
-        ),
-        sorter: (a, b) => b.point - a.point,
-    });
-
-    // 全国順位カラム
-    if (showAllRank) {
-        baseColumns.push({
-            title: '全国順位',
-            dataIndex: 'allRank',
-            key: 'allRank',
-            align: 'center',
-            render: (allRank: number) => (
-                <Text variant="body1" weight="bold" color="#1f2937">
-                    全国{allRank}位
-                </Text>
-            ),
-        });
-    }
-
-    // 変動カラム
-    if (showDiff) {
-        baseColumns.push(
+    // 基本カラム構成
+    const getColumns = (): ColumnsType<RankingPlayer> => {
+        const columns: ColumnsType<RankingPlayer> = [
             {
-                title: '順位変動',
-                dataIndex: 'rankDiff',
-                key: 'rankDiff',
+                title: '順位',
+                dataIndex: 'rank',
+                key: 'rank',
+                width: 80,
                 align: 'center',
-                render: (rankDiff: number) => renderDiff(rankDiff, true),
+                render: renderRank,
+                sorter: (a, b) => a.rank - b.rank,
             },
             {
-                title: 'ポイント変動',
-                dataIndex: 'pointDiff',
-                key: 'pointDiff',
+                title: 'プレイヤー名',
+                dataIndex: 'name',
+                key: 'name',
                 align: 'center',
-                render: (pointDiff: number) => renderDiff(pointDiff, false),
-            }
-        );
-    }
+                render: (name: string) => (
+                    <Text variant="body1" weight="semibold" color="#1f2937">
+                        {name}
+                    </Text>
+                ),
+            },
+        ];
 
-    // 最終カラム構成
-    const columns = [...baseColumns, ...extraColumns];
+        // 都道府県カラム
+        if (showPrefecture) {
+            columns.push({
+                title: '都道府県',
+                dataIndex: 'prefecture',
+                key: 'prefecture',
+                align: 'center',
+                render: (prefecture: string) => (
+                    <Text variant="body2" color="secondary">
+                        {prefecture || '-'}
+                    </Text>
+                ),
+            });
+        }
+
+        // ポイントカラム
+        columns.push({
+            title: 'ポイント',
+            dataIndex: 'point',
+            key: 'point',
+            align: 'center',
+            render: (point: number) => (
+                <Text variant="body1" weight="bold" color="#1b5e20">
+                    {point.toLocaleString()} pt
+                </Text>
+            ),
+            sorter: (a, b) => b.point - a.point,
+        });
+
+        // 全国順位カラム
+        if (showAllRank) {
+            columns.push({
+                title: '全国順位',
+                dataIndex: 'allRank',
+                key: 'allRank',
+                align: 'center',
+                render: (allRank: number) => (
+                    <Text variant="body1" weight="bold" color="#1f2937">
+                        全国{allRank}位
+                    </Text>
+                ),
+            });
+        }
+
+        // 変動カラム
+        if (showDiff) {
+            columns.push(
+                {
+                    title: '順位変動',
+                    dataIndex: 'rankDiff',
+                    key: 'rankDiff',
+                    align: 'center',
+                    render: (rankDiff: number) => renderDiff(rankDiff, true),
+                },
+                {
+                    title: 'ポイント変動',
+                    dataIndex: 'pointDiff',
+                    key: 'pointDiff',
+                    align: 'center',
+                    render: (pointDiff: number) => renderDiff(pointDiff, false),
+                }
+            );
+        }
+
+        // 追加カラムをマージ
+        return [...columns, ...extraColumns];
+    };
 
     // データの制限
     const limitedData = maxItems > 0 ? data.slice(0, maxItems) : data;
 
     // 行のクラス名
     const getRowClassName = (record: RankingPlayer) => {
-        const baseClass = `ranking-row rank-${record.rank}`;
-        return baseClass;
+        return `ranking-row rank-${record.rank}`;
     };
 
+    // テーブルのスタイル
     const tableStyle: React.CSSProperties = {
         backgroundColor: 'rgba(243, 228, 231, 0.85)',
         borderRadius: '16px',
@@ -226,8 +223,47 @@ const RankingTable: React.FC<RankingTableProps> = ({
         ...style,
     };
 
+    // 動的スタイルの生成
+    const dynamicStyles = `
+        .ranking-table .ant-table-thead > tr > th {
+            background-color: ${themeColor} !important;
+            color: #880e4f !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            text-align: center !important;
+        }
+        
+        .ranking-row:hover {
+            background-color: #f9f9f9 !important;
+        }
+        
+        .rank-1 .ant-table-cell {
+            font-size: 1.2rem !important;
+        }
+        
+        .rank-2 .ant-table-cell {
+            font-size: 1.1rem !important;
+        }
+        
+        .rank-3 .ant-table-cell {
+            font-size: 1.05rem !important;
+        }
+        
+        @media screen and (max-width: 480px) {
+            .ranking-table .ant-table {
+                font-size: 0.75rem !important;
+            }
+            .ranking-table .ant-table-thead > tr > th {
+                font-size: 0.7rem !important;
+                padding: 4px !important;
+            }
+        }
+    `;
+
     return (
-        <div style={tableStyle}>
+        <div style={tableStyle} className="ranking-table">
+            <style dangerouslySetInnerHTML={{ __html: dynamicStyles }} />
+            
             {title && (
                 <div style={{ marginBottom: '20px', textAlign: 'center' }}>
                     <Text variant="h4" weight="bold" color="#880e4f">
@@ -236,8 +272,8 @@ const RankingTable: React.FC<RankingTableProps> = ({
                 </div>
             )}
             
-            <Table
-                columns={columns}
+            <Table<RankingPlayer>
+                columns={getColumns()}
                 dataSource={limitedData.map(player => ({ ...player, key: player.id }))}
                 loading={loading}
                 pagination={pagination}
@@ -253,44 +289,6 @@ const RankingTable: React.FC<RankingTableProps> = ({
                     overflow: 'hidden',
                 }}
             />
-            
-            <style>
-                {`
-                    .ranking-table .ant-table-thead > tr > th {
-                        background-color: ${themeColor} !important;
-                        color: #880e4f;
-                        font-weight: 600;
-                        font-size: 14px;
-                        text-align: center;
-                    }
-                    
-                    .ranking-row:hover {
-                        background-color: #f9f9f9 !important;
-                    }
-                    
-                    .rank-1 .ant-table-cell {
-                        font-size: 1.2rem !important;
-                    }
-                    
-                    .rank-2 .ant-table-cell {
-                        font-size: 1.1rem !important;
-                    }
-                    
-                    .rank-3 .ant-table-cell {
-                        font-size: 1.05rem !important;
-                    }
-                    
-                    @media screen and (max-width: 480px) {
-                        .ranking-table .ant-table {
-                            font-size: 0.75rem;
-                        }
-                        .ranking-table .ant-table-thead > tr > th {
-                            font-size: 0.7rem;
-                            padding: 4px;
-                        }
-                    }
-                `}
-            </style>
         </div>
     );
 };

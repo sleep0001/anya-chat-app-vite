@@ -4,7 +4,8 @@ import type { ColumnsType } from 'antd/es/table';
 import { CrownOutlined } from '@ant-design/icons';
 import { RankingPlayerData, PeriodOption } from '../../types/DmPlayerLatestStats';
 import './DmpRanking.css';
-import PeriodDropDown from "../common/PeriodDropDown";
+// 修正: 正しいパスでインポート
+import { Selector } from '../molecules';
 
 interface Props {
     latestUpDate: Date;
@@ -77,10 +78,17 @@ const DmpRankingSeaTree: React.FC<Props> = ({
 
             {/* 期間選択を上に配置 */}
             <div style={{ marginBottom: '16px' }}>
-                <PeriodDropDown
-                    selectedPeriod={selectedPeriod}
-                    onPeriodChange={onPeriodChange}
-                    periodOptions={periodOptions}
+                <Selector
+                    label="対象期間"
+                    value={selectedPeriod}
+                    onChange={(value) => onPeriodChange(String(value))}
+                    options={periodOptions.map(option => ({
+                        value: option.key,
+                        label: option.label
+                    }))}
+                    placeholder="期間を選択"
+                    searchable={true}
+                    width={300}
                 />
             </div>
             <p>最終加算日：{latestUpDate.toLocaleDateString('ja-JP', {

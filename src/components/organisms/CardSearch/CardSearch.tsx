@@ -223,9 +223,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                     onMultipleChange={(expansions) => setFormState({ ...formState, expansions: expansions as string[] })}
                                     options={expansionOptions}
                                     placeholder="収録弾を選択"
-                                    width="100%" onChange={function (value: string | number): void {
-                                        throw new Error("Function not implemented.");
-                                    } }                                />
+                                    width="100%"
+                                    onChange={() => {}} // 空の関数で警告を回避
+                                />
 
                                 <Selector
                                     label="カードタイプ"
@@ -234,9 +234,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                     onMultipleChange={(types) => setFormState({ ...formState, types: types as CardType[] })}
                                     options={typeOptions}
                                     placeholder="タイプを選択"
-                                    width="100%" onChange={function (value: string | number): void {
-                                        throw new Error("Function not implemented.");
-                                    } }                                />
+                                    width="100%"
+                                    onChange={() => {}} // 空の関数で警告を回避
+                                />
                             </div>
                         </Space>
                     </Panel>
@@ -258,9 +258,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                 onMultipleChange={(colors) => setFormState({ ...formState, colors: colors as string[] })}
                                 options={colorOptions}
                                 placeholder="カラーを選択"
-                                width="100%" onChange={function (value: string | number): void {
-                                    throw new Error("Function not implemented.");
-                                } }                            />
+                                width="100%"
+                                onChange={() => {}} // 空の関数で警告を回避
+                            />
 
                             <Selector
                                 label="特徴"
@@ -269,9 +269,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                 onMultipleChange={(features) => setFormState({ ...formState, features: features as string[] })}
                                 options={featureOptions}
                                 placeholder="特徴を選択"
-                                width="100%" onChange={function (value: string | number): void {
-                                    throw new Error("Function not implemented.");
-                                } }                            />
+                                width="100%"
+                                onChange={() => {}} // 空の関数で警告を回避
+                            />
 
                             <Selector
                                 label="属性"
@@ -280,9 +280,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
                                 onMultipleChange={(attributes) => setFormState({ ...formState, attributes: attributes as string[] })}
                                 options={attributeOptions}
                                 placeholder="属性を選択"
-                                width="100%" onChange={function (value: string | number): void {
-                                    throw new Error("Function not implemented.");
-                                } }                            />
+                                width="100%"
+                                onChange={() => {}} // 空の関数で警告を回避
+                            />
                         </div>
                     </Panel>
                 </Collapse>
