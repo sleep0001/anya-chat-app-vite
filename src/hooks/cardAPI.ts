@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Card } from "../types/CardType"
-import { SearchRequest } from "../components/layout/SearchComponent";
 
 export const getCards = async(setCards: (cards: Card[]) => void) => {
     /* The line `// const url:string = "https://www.sl33p.net";` is a commented-out line of code in
@@ -18,6 +17,24 @@ export const getCards = async(setCards: (cards: Card[]) => void) => {
     } catch (error) {
         console.error("カード情報が取得できません。");
     }
+}
+
+type CardType = "Leader" | "Character" | "Event" | "Stage";
+
+export type SearchRequest = {
+    name: string;
+    minCost: number;
+    maxCost: number;
+    minPower: number;
+    maxPower: number;
+    blocks:string[];
+    counters: number[];
+    rarities:string[];
+    expansions: string[];
+    types:CardType[];
+    colors: string[];
+    features: string[];
+    attributes: string[];
 }
 
 export const fetchSearchCards = async(setCards: (cards: Card[]) => void, requestData:SearchRequest) => {

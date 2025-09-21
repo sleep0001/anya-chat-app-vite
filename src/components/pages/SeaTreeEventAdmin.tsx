@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import TableContent from '../common/TableContent';
+import TableContent from '../organisms/TableContent/TableContent';
 
 interface SeaTreeEventName {
     id: number;

@@ -13,6 +13,3 @@ export type { RankingLatestPageProps } from './RankingLatestPage/RankingLatestPa
 
 export { default as SeaTreesPage } from './SeaTreesPage/SeaTreesPage';
 export type { SeaTreesPageProps } from './SeaTreesPage/SeaTreesPage';
-
-// 既存のDmpRankingPageテンプレートも継続してエクスポート
-export { default as DmpRankingPage } from '../templates/DmpRankingPage/DmpRankingPage';
