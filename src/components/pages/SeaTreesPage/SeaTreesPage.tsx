@@ -190,7 +190,6 @@ const SeaTreesPage: React.FC<SeaTreesPageProps> = ({
             {/* ランキングテーブル */}
             <RankingTable
                 data={processedRankingData}
-                title="じゅかいらんきんぐ"
                 loading={loading}
                 showPrefecture={true}
                 maxItems={100}

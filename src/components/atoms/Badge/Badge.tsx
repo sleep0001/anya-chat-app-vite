@@ -5,7 +5,7 @@ export interface BadgeProps {
     /** バッジの内容 */
     children?: React.ReactNode;
     /** バッジの種類 */
-    variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info';
+    variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info' | 'positive';
     /** サイズ */
     size?: 'small' | 'medium' | 'large';
     /** ドット表示（数値の代わりに） */
@@ -24,6 +24,10 @@ export interface BadgeProps {
     clickable?: boolean;
     /** クリックハンドラー */
     onClick?: () => void;
+    /** カスタムスタイル */
+    style?: React.CSSProperties;
+    /** カスタムクラス名 */
+    className?: string;
 }
 
 const Badge: React.FC<BadgeProps> = ({
@@ -38,6 +42,8 @@ const Badge: React.FC<BadgeProps> = ({
     icon,
     clickable = false,
     onClick,
+    style = {},
+    className,
 }) => {
     // バリエーション別カラー
     const getVariantColor = (variant: string) => {
@@ -48,6 +54,7 @@ const Badge: React.FC<BadgeProps> = ({
             warning: '#faad14',
             error: '#ff4d4f',
             info: '#13c2c2',
+            positive: '#ffaa00ff',
         };
         return color || colorMap[variant as keyof typeof colorMap] || colorMap.default;
     };
@@ -71,7 +78,11 @@ const Badge: React.FC<BadgeProps> = ({
                 overflowCount={overflowCount}
                 showZero={showZero}
                 color={getVariantColor(variant)}
-                style={{ cursor: clickable ? 'pointer' : 'default' }}
+                style={{ 
+                    cursor: clickable ? 'pointer' : 'default',
+                    ...style // カスタムスタイルを適用
+                }}
+                className={className}
                 onClick={clickable ? onClick : undefined}
             >
                 {children}
@@ -91,11 +102,13 @@ const Badge: React.FC<BadgeProps> = ({
         borderRadius: '12px',
         cursor: clickable ? 'pointer' : 'default',
         margin: 0,
+        ...style, // カスタムスタイルを最後に適用（オーバーライド）
     };
 
     return (
         <Tag
             style={tagStyle}
+            className={className}
             onClick={clickable ? onClick : undefined}
         >
             {icon && <span>{icon}</span>}

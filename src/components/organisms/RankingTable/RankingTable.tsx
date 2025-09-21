@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Progress } from 'antd';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { Text, Icon, Badge } from '../../atoms';
 
@@ -40,6 +40,10 @@ export interface RankingTableProps {
     onRowClick?: (player: RankingPlayer) => void;
     /** カスタムスタイル */
     style?: React.CSSProperties;
+    /** ポイント進捗バーを表示するか */
+    showPointProgress?: boolean;
+    /** 順位の色分けを強化するか */
+    enhancedRankColors?: boolean;
 }
 
 const RankingTable: React.FC<RankingTableProps> = ({
@@ -55,42 +59,122 @@ const RankingTable: React.FC<RankingTableProps> = ({
     extraColumns = [],
     onRowClick,
     style,
+    showPointProgress = false,
+    enhancedRankColors = false,
 }) => {
-    // 順位レンダー
+    // 最大ポイント数を取得（進捗バー用）
+    const maxPoints = Math.max(...data.map(player => player.point));
+
+    // 順位レンダー（拡張版）
     const renderRank = (rank: number) => {
-        const rankElement = <Text variant="body1" weight="bold">{rank}</Text>;
+        const getRankStyle = () => {
+            if (!enhancedRankColors) {
+                // 従来の1-3位のみ
+                if (rank === 1) return { color: '#d4af37', icon: 'crown' as const };
+                if (rank === 2) return { color: '#c0c0c0', icon: 'crown' as const };
+                if (rank === 3) return { color: '#cd7f32', icon: 'crown' as const };
+                return { color: '#1f2937', icon: null };
+            }
+            
+            // 拡張版：より多くの順位に色付け（利用可能なアイコンのみ使用）
+            if (rank === 1) return { color: '#d4af37', icon: 'crown' as const };
+            if (rank === 2) return { color: '#c0c0c0', icon: 'crown' as const };
+            if (rank === 3) return { color: '#cd7f32', icon: 'crown' as const };
+            if (rank <= 5) return { color: '#7c3aed', icon: 'star' as const };
+            if (rank <= 10) return { color: '#dc2626', icon: 'heart' as const }; // flame → heart に変更
+            if (rank <= 20) return { color: '#ea580c', icon: null };
+            if (rank <= 50) return { color: '#059669', icon: null };
+            return { color: '#6b7280', icon: null };
+        };
+
+        const rankStyle = getRankStyle();
+        const rankElement = (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Text 
+                    variant="body1" 
+                    weight="bold" 
+                    style={{ color: rankStyle.color }}
+                >
+                    {rank}
+                </Text>
+            </div>
+        );
         
-        if (rank === 1) {
+        if (rankStyle.icon) {
             return (
-                <span style={{ color: '#d4af37', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Icon name="crown" color="#d4af37" size="small" />
-                    {rankElement}
-                </span>
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center',
+                    alignItems: 'center', 
+                    gap: '4px',
+                    color: rankStyle.color
+                }}>
+                    <Icon name={rankStyle.icon} color={rankStyle.color} size="small" />
+                    <Text 
+                        variant="body1" 
+                        weight="bold" 
+                        style={{ color: rankStyle.color }}
+                    >
+                        {rank}
+                    </Text>
+                </div>
             );
         }
-        if (rank === 2) {
-            return (
-                <span style={{ color: '#c0c0c0', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Icon name="crown" color="#c0c0c0" size="small" />
-                    {rankElement}
-                </span>
-            );
-        }
-        if (rank === 3) {
-            return (
-                <span style={{ color: '#cd7f32', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Icon name="crown" color="#cd7f32" size="small" />
-                    {rankElement}
-                </span>
-            );
-        }
+        
         return rankElement;
     };
 
-    // 変動レンダー
+    // ポイントレンダー（拡張版）
+    const renderPoint = (point: number) => {
+        const pointElement = (
+            <Text variant="body1" weight="bold" color="#1b5e20">
+                {point.toLocaleString()} pt
+            </Text>
+        );
+
+        if (!showPointProgress) {
+            return (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    {pointElement}
+                </div>
+            );
+        }
+
+        const percentage = Math.round((point / maxPoints) * 100);
+        
+        return (
+            <div style={{ minWidth: '150px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {pointElement}
+                <Progress 
+                    percent={percentage}
+                    size="small"
+                    strokeColor={{
+                        '0%': '#f0f9ff',
+                        '50%': '#0ea5e9',
+                        '100%': '#0369a1',
+                    }}
+                    showInfo={false}
+                    style={{ marginTop: '4px', width: '100%' }}
+                />
+            </div>
+        );
+    };
+
+    // 変動レンダー（順位変動の段階的カラー版）
     const renderDiff = (diff: number, isRank: boolean = false) => {
         if (diff === 2147483647) {
-            return <Badge variant="success">new!!</Badge>;
+            return (
+                <Badge 
+                    variant="success"
+                    style={{ 
+                        backgroundColor: '#52c41a', 
+                        color: 'white',
+                        border: '1px solid #52c41a'
+                    }}
+                >
+                    new!!
+                </Badge>
+            );
         }
         
         if (diff === 0) {
@@ -100,12 +184,70 @@ const RankingTable: React.FC<RankingTableProps> = ({
         const isPositive = diff > 0;
         const absValue = Math.abs(diff);
         const icon = isRank 
-            ? (isPositive ? 'arrow-up' : 'arrow-down')
-            : (isPositive ? 'arrow-up' : 'arrow-down');
+            ? (isPositive ? 'arrow-up' as const : 'arrow-down' as const)
+            : (isPositive ? 'arrow-up' as const : 'arrow-down' as const);
         
+        // 順位変動の場合のカスタムスタイル
+        if (isRank) {
+            if (isPositive) {
+                // 順位上昇（数値が大きいほど順位が下がっている）：値に応じて段階的に赤の濃度を変更
+                const getUpColor = (value: number) => {
+                    if (value >= 11) {
+                        // 11以上：濃いめの赤
+                        return { 
+                            backgroundColor: '#991b1b', 
+                            border: '1px solid #991b1b',
+                            color: 'white'
+                        };
+                    } else if (value >= 5) {
+                        // 5-10：赤
+                        return { 
+                            backgroundColor: '#dc2626', 
+                            border: '1px solid #dc2626',
+                            color: 'white'
+                        };
+                    } else {
+                        // 1-4：薄めの赤
+                        return { 
+                            backgroundColor: '#f87171', 
+                            border: '1px solid #f87171',
+                            color: 'white'
+                        };
+                    }
+                };
+                
+                const colors = getUpColor(absValue);
+                return (
+                    <Badge 
+                        variant="error"
+                        icon={<Icon name={icon} size="small" />}
+                        style={colors}
+                    >
+                        {absValue}
+                    </Badge>
+                );
+            } else {
+                // 順位下降（順位が上がっている）：青系
+                return (
+                    <Badge 
+                        variant="default"
+                        icon={<Icon name={icon} size="small" />}
+                        style={{
+                            backgroundColor: '#538bd4ff',
+                            color: 'white',
+                            border: '1px solid #538bd4ff'
+                        }}
+                    >
+                        {absValue}
+                    </Badge>
+                );
+            }
+        }
+        
+        // ポイント変動の場合は従来通り
         return (
             <Badge 
-                variant={isRank ? (isPositive ? 'error' : 'success') : (isPositive ? 'success' : 'error')}
+                variant={'positive'}
                 icon={<Icon name={icon} size="small" />}
             >
                 {absValue}
@@ -120,7 +262,7 @@ const RankingTable: React.FC<RankingTableProps> = ({
                 title: '順位',
                 dataIndex: 'rank',
                 key: 'rank',
-                width: 80,
+                width: enhancedRankColors ? 100 : 80,
                 align: 'center',
                 render: renderRank,
                 sorter: (a, b) => a.rank - b.rank,
@@ -159,11 +301,8 @@ const RankingTable: React.FC<RankingTableProps> = ({
             dataIndex: 'point',
             key: 'point',
             align: 'center',
-            render: (point: number) => (
-                <Text variant="body1" weight="bold" color="#1b5e20">
-                    {point.toLocaleString()} pt
-                </Text>
-            ),
+            width: showPointProgress ? 180 : undefined,
+            render: renderPoint,
             sorter: (a, b) => b.point - a.point,
         });
 
@@ -174,11 +313,26 @@ const RankingTable: React.FC<RankingTableProps> = ({
                 dataIndex: 'allRank',
                 key: 'allRank',
                 align: 'center',
-                render: (allRank: number) => (
-                    <Text variant="body1" weight="bold" color="#1f2937">
-                        全国{allRank}位
-                    </Text>
-                ),
+                render: (allRank: number) => {
+                    if (allRank === null || allRank === undefined || allRank === 0) {
+                        return (
+                            <Text variant="body2" color="secondary">
+                                -
+                            </Text>
+                        );
+                    }
+                    
+                    return (
+                        <Text variant="body1" weight="bold" color="#1f2937">
+                            全国{allRank}位
+                        </Text>
+                    );
+                },
+                sorter: (a, b) => {
+                    const aRank = a.allRank || 0;
+                    const bRank = b.allRank || 0;
+                    return aRank - bRank;
+                },
             });
         }
 
@@ -190,28 +344,55 @@ const RankingTable: React.FC<RankingTableProps> = ({
                     dataIndex: 'rankDiff',
                     key: 'rankDiff',
                     align: 'center',
-                    render: (rankDiff: number) => renderDiff(rankDiff, true),
+                    render: (rankDiff: number) => {
+                        if (rankDiff === null || rankDiff === undefined) {
+                            return (
+                                <Text variant="body2" color="secondary">
+                                    -
+                                </Text>
+                            );
+                        }
+                        return renderDiff(rankDiff, true);
+                    },
                 },
                 {
                     title: 'ポイント変動',
                     dataIndex: 'pointDiff',
                     key: 'pointDiff',
                     align: 'center',
-                    render: (pointDiff: number) => renderDiff(pointDiff, false),
+                    render: (pointDiff: number) => {
+                        if (pointDiff === null || pointDiff === undefined) {
+                            return (
+                                <Text variant="body2" color="secondary">
+                                    -
+                                </Text>
+                            );
+                        }
+                        return renderDiff(pointDiff, false);
+                    },
                 }
             );
         }
 
-        // 追加カラムをマージ
         return [...columns, ...extraColumns];
     };
 
     // データの制限
     const limitedData = maxItems > 0 ? data.slice(0, maxItems) : data;
 
-    // 行のクラス名
+    // 行のクラス名（拡張版）
     const getRowClassName = (record: RankingPlayer) => {
-        return `ranking-row rank-${record.rank}`;
+        const baseClass = `ranking-row rank-${record.rank}`;
+        
+        if (!enhancedRankColors) return baseClass;
+        
+        // 拡張された行スタイル
+        if (record.rank <= 3) return `${baseClass} top-3`;
+        if (record.rank <= 5) return `${baseClass} top-5`;
+        if (record.rank <= 10) return `${baseClass} top-10`;
+        if (record.rank <= 20) return `${baseClass} top-20`;
+        
+        return baseClass;
     };
 
     // テーブルのスタイル
@@ -223,7 +404,7 @@ const RankingTable: React.FC<RankingTableProps> = ({
         ...style,
     };
 
-    // 動的スタイルの生成
+    // 動的スタイルの生成（拡張版）
     const dynamicStyles = `
         .ranking-table .ant-table-thead > tr > th {
             background-color: ${themeColor} !important;
@@ -248,6 +429,24 @@ const RankingTable: React.FC<RankingTableProps> = ({
         .rank-3 .ant-table-cell {
             font-size: 1.05rem !important;
         }
+        
+        ${enhancedRankColors ? `
+        .top-3 {
+            background-color: rgba(255, 215, 0, 0.1) !important;
+        }
+        
+        .top-5 {
+            background-color: rgba(124, 58, 237, 0.05) !important;
+        }
+        
+        .top-10 {
+            background-color: rgba(220, 38, 38, 0.05) !important;
+        }
+        
+        .top-20 {
+            background-color: rgba(234, 88, 12, 0.03) !important;
+        }
+        ` : ''}
         
         @media screen and (max-width: 480px) {
             .ranking-table .ant-table {
@@ -278,7 +477,7 @@ const RankingTable: React.FC<RankingTableProps> = ({
                 loading={loading}
                 pagination={pagination}
                 bordered
-                size="middle"
+                size="small"
                 rowClassName={getRowClassName}
                 onRow={(record) => ({
                     onClick: () => onRowClick?.(record),

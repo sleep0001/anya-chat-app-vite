@@ -94,14 +94,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
         <div className={`chatroom-organism ${className || ''}`} style={containerStyle}>
             {/* ヘッダー部分 */}
             <div style={headerStyle}>
-                <Text variant="h3" weight="bold" color="primary" style={{ marginBottom: '8px' }}>
-                    チャットルーム
-                </Text>
                 <Text variant="h5" weight="medium" color="secondary" style={{ marginBottom: '12px' }}>
-                    ルーム名：{entryRoom.roomName}
+                    ROOM：{entryRoom.roomName}
                 </Text>
                 <Text variant="body2" color="info">
-                    💬 みんなでおしゃべりを楽しもう！
+                    ひみつつうしん、ワクワク！！
                 </Text>
             </div>
 

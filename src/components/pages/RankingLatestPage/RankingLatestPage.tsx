@@ -74,19 +74,31 @@ const RankingLatestPage: React.FC<RankingLatestPageProps> = ({
 
     // ランキングデータの加工
     const processedRankingData: RankingPlayer[] = useMemo(() => {
+        // Step 1: 全体データをポイント順でソートして全国順位を計算
+        const allPlayersSorted = [...rankingPlayerData].sort((a, b) => b.point - a.point);
+        
+        // Step 2: 全国順位を付与（全体データ基準）
+        const playersWithAllRank = allPlayersSorted.map((player, index) => ({
+            ...player,
+            allRank: index + 1, // 全国順位
+        }));
+        
+        // Step 3: 都道府県でフィルタリング
         const filtered = selectedPrefecture === ""
-            ? rankingPlayerData
-            : rankingPlayerData.filter((player) => player.prefecture === selectedPrefecture);
-
-        const sorted = [...filtered].sort((a, b) => b.point - a.point);
-
-        return sorted.map((player, index) => ({
+            ? playersWithAllRank
+            : playersWithAllRank.filter((player) => player.prefecture === selectedPrefecture);
+        
+        // Step 4: フィルタ後のデータをポイント順で再ソート（県内順位計算用）
+        const sortedFiltered = [...filtered].sort((a, b) => b.point - a.point);
+        
+        // Step 5: 最終的なデータ構造に変換
+        return sortedFiltered.map((player, index) => ({
             id: player.dmpId,
-            rank: index + 1,
+            rank: index + 1,           // 県内順位（フィルタ後の順位）
             name: player.name,
             point: player.point,
             prefecture: player.prefecture,
-            allRank: player.allRank,
+            allRank: player.allRank,   // 全国順位（フィルタ前に計算済み）
         }));
     }, [selectedPrefecture, rankingPlayerData]);
 
