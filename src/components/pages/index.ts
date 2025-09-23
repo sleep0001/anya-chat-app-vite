@@ -17,6 +17,6 @@ export type { SeaTreesPageProps } from './SeaTreesPage/SeaTreesPage';
 // 管理者ページ
 export { default as SeaTreeEventAdmin } from './SeaTreeEventAdmin/SeaTreeEventAdmin';
 
-export { default as PreviewToolRelease } from './PreviewToolRelease/previewToolRelease';
+export { default as PreviewToolRelease } from './PreviewToolRelease/PreviewToolRelease';
 
 export { default as PlayerPointsChart } from './PlayerPointsChart/PlayerPointsChart';
