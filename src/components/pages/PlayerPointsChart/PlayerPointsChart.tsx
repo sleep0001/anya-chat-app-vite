@@ -2,38 +2,45 @@
 import { useState, useMemo } from "react";
 import { PlayerData, PlayerConfig, ChartDataPoint } from "../../../types";
 import { ChartArea, PlayerSelectionPanel } from "../../organisms";
+import { usePlayerPoints } from "../../../hooks/usePlayerPoints";
+import { ErrorDisplay, Loading } from "../../atoms";
 
 const PlayerPointsChart: React.FC = () => {
+    
     // モックデータ（バックエンドから受け取るデータ構造）
-    const mockApiData: PlayerData[] = [
-        {
-            name: "アーニャ",
-            data: [
-                { date: "2025-04-01", point: 150 },
-                { date: "2025-05-01", point: 200 },
-                { date: "2025-06-01", point: 300 },
-                { date: "2025-07-01", point: 450 },
-                { date: "2025-08-01", point: 450 },
-                { date: "2025-09-01", point: 550 },
-                { date: "2025-10-01", point: 750 },
-                { date: "2025-11-01", point: 10500 }
-            ]
-        },
-        {
-            name: "ボンド", 
-            data: [
-                { date: "2025-04-01", point: 50 },
-                { date: "2025-05-01", point: 100 },
-                { date: "2025-06-01", point: 300 },
-                { date: "2025-07-01", point: 550 },
-                { date: "2025-08-01", point: 750 },
-                { date: "2025-09-01", point: 800 },
-                { date: "2025-10-01", point: 900 },
-                { date: "2025-11-01", point: 1200 }
-            ]
-        }
-    ];
+    // const mockApiData: PlayerData[] = [
+    //     {
+    //         name: "アーニャ",
+    //         data: [
+    //             { date: "2025-04-01", point: 150 },
+    //             { date: "2025-05-01", point: 200 },
+    //             { date: "2025-06-01", point: 300 },
+    //             { date: "2025-07-01", point: 450 },
+    //             { date: "2025-08-01", point: 450 },
+    //             { date: "2025-09-01", point: 550 },
+    //             { date: "2025-10-01", point: 750 },
+    //             { date: "2025-11-01", point: 10500 }
+    //         ]
+    //     },
+    //     {
+    //         name: "ボンド", 
+    //         data: [
+    //             { date: "2025-04-01", point: 50 },
+    //             { date: "2025-05-01", point: 100 },
+    //             { date: "2025-06-01", point: 300 },
+    //             { date: "2025-07-01", point: 550 },
+    //             { date: "2025-08-01", point: 750 },
+    //             { date: "2025-09-01", point: 800 },
+    //             { date: "2025-10-01", point: 900 },
+    //             { date: "2025-11-01", point: 1200 }
+    //         ]
+    //     }
+    // ];
 
+    const { data: apiData, loading, error } = usePlayerPoints();
+
+    if (loading) return <Loading />;
+    if (error) return <ErrorDisplay message={error} />;
     // プレイヤー設定 - より魅力的な色設定に変更
     const [players, setPlayers] = useState<PlayerConfig[]>([
         { 
@@ -54,9 +61,9 @@ const PlayerPointsChart: React.FC = () => {
 
     // データ変換: APIデータ → チャート用データ
     const chartData = useMemo(() => {
-        if (!mockApiData.length) return [];
+        if (!apiData.length) return [];
 
-        // データポイントを確実に作成
+        // ここでデータを加工
         const result: ChartDataPoint[] = [
             { date: "2025-04-01", player1: 150, player2: 50 },
             { date: "2025-05-01", player1: 200, player2: 100 },
@@ -70,7 +77,7 @@ const PlayerPointsChart: React.FC = () => {
 
         console.log('Chart data created:', result);
         return result;
-    }, [mockApiData]);
+    }, [apiData]);
 
     // プレイヤー表示切り替え
     const handlePlayerToggle = (playerId: string) => {
@@ -159,7 +166,6 @@ const PlayerPointsChart: React.FC = () => {
                     <div className="player-panel-section">
                         <PlayerSelectionPanel
                             players={players}
-                            chartData={chartData}
                             onPlayerToggle={handlePlayerToggle}
                         />
                     </div>

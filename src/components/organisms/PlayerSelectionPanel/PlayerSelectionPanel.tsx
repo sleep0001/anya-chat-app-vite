@@ -1,14 +1,12 @@
-import { ChartDataPoint, PlayerConfig } from "../../../types";
+import { PlayerConfig } from "../../../types";
 
 export interface PlayerSelectionPanelProps {
     players: PlayerConfig[];
-    chartData: ChartDataPoint[];
     onPlayerToggle: (playerId: string) => void;
 }
 
 const PlayerSelectionPanel: React.FC<PlayerSelectionPanelProps> = ({
     players,
-    chartData,
     onPlayerToggle
 }) => {
     const containerStyle: React.CSSProperties = {
@@ -20,24 +18,6 @@ const PlayerSelectionPanel: React.FC<PlayerSelectionPanelProps> = ({
         borderRadius: '24px',
         border: '1px solid rgba(75, 85, 99, 0.3)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
-    };
-
-    const headerStyle: React.CSSProperties = {
-        fontSize: '20px',
-        fontWeight: '600',
-        marginBottom: '20px',
-        color: '#e5e7eb',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px'
-    };
-
-    const indicatorStyle: React.CSSProperties = {
-        width: '8px',
-        height: '8px',
-        backgroundColor: '#3b82f6',
-        borderRadius: '50%',
-        animation: 'pulse 2s infinite'
     };
 
     const cardContainerStyle: React.CSSProperties = {
@@ -56,20 +36,16 @@ const PlayerSelectionPanel: React.FC<PlayerSelectionPanelProps> = ({
                 }
             `}</style>
             <div style={containerStyle}>
-                <h2 style={headerStyle}>
+                {/* <h2 style={headerStyle}>
                     <div style={indicatorStyle} />
-                    プレイヤー選択
-                </h2>
+                    プレイヤー
+                </h2> */}
                 <div style={cardContainerStyle}>
                     {players.map(player => {
-                        const latestData = chartData[chartData.length - 1];
-                        const currentPoints = latestData?.[player.id] as number || 0;
-
                         return (
                             <PlayerToggleCardEnhanced
                                 key={player.id}
                                 player={player}
-                                currentPoints={currentPoints}
                                 onToggle={onPlayerToggle}
                             />
                         );
@@ -83,13 +59,11 @@ const PlayerSelectionPanel: React.FC<PlayerSelectionPanelProps> = ({
 // 拡張されたPlayerToggleCard（ゴールに近づける）
 interface PlayerToggleCardEnhancedProps {
     player: PlayerConfig;
-    currentPoints: number;
     onToggle: (playerId: string) => void;
 }
 
 const PlayerToggleCardEnhanced: React.FC<PlayerToggleCardEnhancedProps> = ({
     player,
-    currentPoints,
     onToggle
 }) => {
     const cardStyle: React.CSSProperties = {
@@ -138,13 +112,6 @@ const PlayerToggleCardEnhanced: React.FC<PlayerToggleCardEnhancedProps> = ({
         transition: 'color 0.3s ease'
     };
 
-    const pointsStyle: React.CSSProperties = {
-        fontSize: '14px',
-        fontWeight: '500',
-        color: player.visible ? player.color : '#6b7280',
-        textAlign: 'right' as const
-    };
-
     const toggleIndicatorStyle: React.CSSProperties = {
         position: 'absolute' as const,
         top: '12px',
@@ -178,11 +145,6 @@ const PlayerToggleCardEnhanced: React.FC<PlayerToggleCardEnhancedProps> = ({
                     <span style={playerNameStyle}>{player.name}</span>
                 </div>
             </div>
-            
-            <div style={pointsStyle}>
-                {currentPoints.toLocaleString()} pts
-            </div>
-            
             {/* 装飾的なグラデーション */}
             {player.visible && (
                 <div style={{

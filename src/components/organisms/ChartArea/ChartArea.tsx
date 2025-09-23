@@ -1,5 +1,5 @@
 // src/components/organisms/ChartArea/ChartArea.tsx
-import { CartesianGrid, Line, LineChart, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { ChartDataPoint, PlayerConfig } from "../../../types";
 import { CustomTooltip } from "../../molecules";
 
@@ -267,10 +267,10 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                                             strokeWidth: 1,
                                             className: 'chart-dot-default'
                                         }}
-                                        activeDot={false}
+                                        activeDot={true}
                                         name={player.name}
-                                        connectNulls={false}
-                                        isAnimationActive={false}
+                                        connectNulls={true}
+                                        isAnimationActive={true}
                                     />
                                 ))}
 
