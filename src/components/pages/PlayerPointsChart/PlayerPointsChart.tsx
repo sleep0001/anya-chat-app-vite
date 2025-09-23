@@ -1,67 +1,114 @@
 // src/components/pages/PlayerPointsChart/PlayerPointsChart.tsx
-import { useState, useMemo } from "react";
-import { PlayerData, PlayerConfig, ChartDataPoint } from "../../../types";
+import { useState, useMemo, useEffect } from "react";
+import { PlayerConfig, ChartDataPoint, PeriodOption } from "../../../types";
 import { ChartArea, PlayerSelectionPanel } from "../../organisms";
 import { usePlayerPoints } from "../../../hooks/usePlayerPoints";
 import { ErrorDisplay, Loading } from "../../atoms";
+import { PrefectureSelector, Selector } from "../../molecules";
 
 const PlayerPointsChart: React.FC = () => {
-    
-    // モックデータ（バックエンドから受け取るデータ構造）
-    // const mockApiData: PlayerData[] = [
-    //     {
-    //         name: "アーニャ",
-    //         data: [
-    //             { date: "2025-04-01", point: 150 },
-    //             { date: "2025-05-01", point: 200 },
-    //             { date: "2025-06-01", point: 300 },
-    //             { date: "2025-07-01", point: 450 },
-    //             { date: "2025-08-01", point: 450 },
-    //             { date: "2025-09-01", point: 550 },
-    //             { date: "2025-10-01", point: 750 },
-    //             { date: "2025-11-01", point: 10500 }
-    //         ]
-    //     },
-    //     {
-    //         name: "ボンド", 
-    //         data: [
-    //             { date: "2025-04-01", point: 50 },
-    //             { date: "2025-05-01", point: 100 },
-    //             { date: "2025-06-01", point: 300 },
-    //             { date: "2025-07-01", point: 550 },
-    //             { date: "2025-08-01", point: 750 },
-    //             { date: "2025-09-01", point: 800 },
-    //             { date: "2025-10-01", point: 900 },
-    //             { date: "2025-11-01", point: 1200 }
-    //         ]
-    //     }
-    // ];
 
     const { data: apiData, loading, error } = usePlayerPoints();
 
+    const [selectedPrefecture, setSelectedPrefecture] = useState<string>("");
+    const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+
     if (loading) return <Loading />;
     if (error) return <ErrorDisplay message={error} />;
-    // プレイヤー設定 - より魅力的な色設定に変更
-    const [players, setPlayers] = useState<PlayerConfig[]>([
-        { 
-            id: 'player1', 
-            name: 'アーニャ', 
-            color: '#ff6b9d', // ピンク系
-            gradientColor: '#ffeaa7', // 黄色系
-            visible: true 
-        },
-        { 
-            id: 'player2', 
-            name: 'ボンド', 
-            color: '#74b9ff', // 青系
-            gradientColor: '#00cec9', // ターコイズ系
-            visible: true 
+
+    const [players, setPlayers] = useState<PlayerConfig[]>([]);
+
+    useEffect(() => {
+        if (apiData.length > 0) {
+            const colorPalette = [
+                { color: '#667eea', gradientColor: '#764ba2' },
+                { color: '#f093fb', gradientColor: '#f5576c' },
+                { color: '#4facfe', gradientColor: '#00f2fe' },
+                { color: '#43e97b', gradientColor: '#38f9d7' },
+                { color: '#fa709a', gradientColor: '#fee140' },
+                { color: '#a8edea', gradientColor: '#fed6e3' },
+            ];
+
+            const topN = 10; // 上位10名を表示（必要に応じて変更）
+            const allPlayers: Array<{
+                playerId: string;
+                playerData: any;
+                latestPoint: number;
+            }> = [];
+
+            // 都道府県フィルターを適用してプレイヤーを収集
+            apiData.forEach(responseGraph => {
+                Object.keys(responseGraph).forEach((playerId) => {
+                    const playerData = responseGraph[playerId];
+
+                    if (selectedPrefecture === '' || playerData.prefecture === selectedPrefecture) {
+                        // 最新の日付のポイントを取得
+                        const sortedPointMap = [...playerData.pointMap].sort((a, b) => 
+                            new Date(b.date).getTime() - new Date(a.date).getTime()
+                        );
+                        const latestPoint = sortedPointMap[0]?.point || 0;
+
+                        allPlayers.push({
+                            playerId,
+                            playerData,
+                            latestPoint
+                        });
+                    }
+                });
+            });
+
+            // 最新ポイントで降順ソートして上位N名を取得
+            const topPlayers = allPlayers
+                .sort((a, b) => b.latestPoint - a.latestPoint)
+                .slice(0, topN);
+
+            // プレイヤー設定を生成
+            const generatedPlayers: PlayerConfig[] = topPlayers.map((player, index) => {
+                const colors = colorPalette[index % colorPalette.length];
+                return {
+                    id: player.playerId,
+                    name: `${player.playerData.name} (${player.playerData.prefecture})`,
+                    color: colors.color,
+                    gradientColor: colors.gradientColor,
+                    visible: true
+                };
+            });
+
+            setPlayers(generatedPlayers);
         }
-    ]);
+    }, [apiData, selectedPrefecture]);
+
+
+
+    const periodOptions: PeriodOption[] = useMemo(() => {
+        if (!apiData || Object.keys(apiData).length === 0) return [];
+        
+        return Object.keys(apiData)
+            .map(key => {
+                const [startDate, endDate] = key.split('_');
+                return {
+                    key,
+                    label: `${startDate} ～ ${endDate}`,
+                    startDate: new Date(startDate),
+                    endDate: new Date(endDate)
+                };
+            })
+            .filter(period => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return period.startDate <= today;
+            })
+            .sort((a, b) => b.endDate.getTime() - a.endDate.getTime());
+    }, [apiData]);
+
+
+
+
 
     // データ変換: APIデータ → チャート用データ
     const chartData = useMemo(() => {
         if (!apiData.length) return [];
+
 
         // ここでデータを加工
         const result: ChartDataPoint[] = [
@@ -77,7 +124,7 @@ const PlayerPointsChart: React.FC = () => {
 
         console.log('Chart data created:', result);
         return result;
-    }, [apiData]);
+    }, [apiData, selectedPrefecture]);
 
     // プレイヤー表示切り替え
     const handlePlayerToggle = (playerId: string) => {
@@ -110,6 +157,13 @@ const PlayerPointsChart: React.FC = () => {
         margin: '8px',
         boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
     };
+        const controlsStyle: React.CSSProperties = {
+            display: 'flex',
+            gap: '16px',
+            marginBottom: '24px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+        };
 
     // 装飾的なオーバーレイ
     const overlayStyle: React.CSSProperties = {
@@ -159,7 +213,7 @@ const PlayerPointsChart: React.FC = () => {
                     opacity: 0;
                 }
             `}</style>
-            
+
             <div style={pageStyle}>
                 <div style={overlayStyle} />
                 <div style={{ position: 'relative', zIndex: 1 }}>
@@ -167,6 +221,26 @@ const PlayerPointsChart: React.FC = () => {
                         <PlayerSelectionPanel
                             players={players}
                             onPlayerToggle={handlePlayerToggle}
+                        />
+                    </div>
+                    <div style={controlsStyle}>
+                        <Selector
+                            label="対象期間"
+                            value={selectedPeriod}
+                            onChange={(value) => setSelectedPeriod(String(value))}
+                            options={periodOptions.map(option => ({
+                                value: option.key,
+                                label: option.label
+                            }))}
+                            placeholder="期間を選択"
+                            searchable={true}
+                            width={300}
+                        />
+
+                        <PrefectureSelector
+                            value={selectedPrefecture}
+                            onChange={setSelectedPrefecture}
+                            label="都道府県"
                         />
                     </div>
                     <div className="chart-section">
