@@ -24,3 +24,12 @@ export type { LoadingProps } from './Loading/Loading.tsx';
 
 export { default as ErrorDisplay } from './ErrorDisplay/ErrorDisplay.tsx';
 export type { ErrorDisplayProps } from './ErrorDisplay/ErrorDisplay.tsx';
+
+export { default as Checkbox } from './Checkbox/Checkbox.tsx'
+export type { CheckboxProps } from './Checkbox/Checkbox.tsx';
+
+export { default as ColorIndicator } from './ColorIndicator/ColorIndicator.tsx'
+export type { ColorIndicatorProps } from './ColorIndicator/ColorIndicator.tsx';
+
+export { default as StatCardValue } from './StatCardValue/StatCardValue.tsx'
+export type { StatCardValueProps } from './StatCardValue/StatCardValue.tsx';
