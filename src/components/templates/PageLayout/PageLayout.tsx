@@ -32,6 +32,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
         { key: '2', label: 'DMP Ranking', path: '/rank', },
         { key: '3', label: 'アニャマス県ランキング', path: '/dm', },
         { key: '4', label: '樹海CS', path: '/seatrees', },
+        { key: '5', label: 'ポイント遷移', path: '/chart', },
         // { key: '5', label: 'ワンピ検索', path: '/card', },
     ],
     footerLinks = [],
