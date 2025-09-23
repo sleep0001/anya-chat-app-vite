@@ -8,11 +8,12 @@ import {
     CardSearchPage, 
     RankingLatestPage,
     SeaTreesPage,
-    DmpRankingPage
+    DmpRankingPage,
+    ErrorBoundary,
+    SeaTreeEventAdmin,
+    PreviewToolRelease,
+    PlayerPointsChart
 } from '../components';
-import PreviewToolRelease from '../previewToolRelease/previewToolRelease.tsx';
-import ErrorBoundary from '../components/ErrorBoundary.tsx';
-import SeaTreeEventAdmin from '../components/pages/SeaTreeEventAdmin.tsx';
 
 const ChatRoomPage = lazy(() => import('../components/pages/ChatRoomPage/ChatRoomPage'));
 
@@ -34,6 +35,7 @@ export default function AppRoutes() {
                         } />
                         <Route path='/seatrees' element={<SeaTreesPage />} />
                         <Route path='/seatrees/admin' element={<SeaTreeEventAdmin />} />
+                        <Route path='/chart' element={<PlayerPointsChart />} />
                     </Route>
                 </Routes>
             </Layout>

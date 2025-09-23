@@ -5,6 +5,7 @@ export * from "./CardType";
 export * from "./DmPlayerStats";
 export * from "./DmPlayerLatestStats";
 export * from "./Types";
+export * from "./RankingGraph";
 
 // 共通の基底型
 export interface BaseEntity {
