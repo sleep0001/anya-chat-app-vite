@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { PlayerConfig } from "../../../types";
 
 export interface PlayerSelectionPanelProps {
@@ -9,22 +10,34 @@ const PlayerSelectionPanel: React.FC<PlayerSelectionPanelProps> = ({
     players,
     onPlayerToggle
 }) => {
+    // 画面サイズを検知
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     const containerStyle: React.CSSProperties = {
-        marginBottom: '32px',
-        padding: '24px',
+        marginBottom: isMobile ? '16px' : '32px',
+        padding: isMobile ? '16px' : '24px',
         background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(31, 41, 55, 0.8) 100%)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderRadius: '24px',
+        borderRadius: isMobile ? '16px' : '24px',
         border: '1px solid rgba(75, 85, 99, 0.3)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
     };
 
     const cardContainerStyle: React.CSSProperties = {
         display: 'flex',
-        gap: '16px',
+        gap: isMobile ? '8px' : '16px',
         flexWrap: 'wrap' as const,
-        justifyContent: 'center'
+        justifyContent: isMobile ? 'flex-start' : 'center'
     };
 
     return (
@@ -36,10 +49,6 @@ const PlayerSelectionPanel: React.FC<PlayerSelectionPanelProps> = ({
                 }
             `}</style>
             <div style={containerStyle}>
-                {/* <h2 style={headerStyle}>
-                    <div style={indicatorStyle} />
-                    プレイヤー
-                </h2> */}
                 <div style={cardContainerStyle}>
                     {players.map(player => {
                         return (
@@ -66,9 +75,25 @@ const PlayerToggleCardEnhanced: React.FC<PlayerToggleCardEnhancedProps> = ({
     player,
     onToggle
 }) => {
+    // 画面サイズを検知
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     const cardStyle: React.CSSProperties = {
-        minWidth: '280px',
-        padding: '20px 24px',
+        minWidth: isMobile ? '140px' : '280px',
+        padding: isMobile ? '8px 12px' : '20px 24px',
+        flex: isMobile ? '1 1 calc(50% - 8px)' : 'initial',
+        maxWidth: isMobile ? 'calc(50% - 8px)' : 'none',
+        minHeight: isMobile ? '40px' : '60px',
+        height: isMobile ? '40px' : 'auto',
         borderRadius: '16px',
         border: `2px solid ${player.visible ? player.color + '60' : '#374151'}`,
         background: player.visible 
@@ -77,20 +102,22 @@ const PlayerToggleCardEnhanced: React.FC<PlayerToggleCardEnhancedProps> = ({
         cursor: 'pointer',
         transition: 'all 0.3s ease',
         position: 'relative' as const,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
     };
 
     const headerRowStyle: React.CSSProperties = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: '12px'
+        marginBottom: isMobile ? '12px' : '0'
     };
 
     const playerInfoStyle: React.CSSProperties = {
         display: 'flex',
         alignItems: 'center',
-        gap: '12px'
+        gap: isMobile ? '6px' : '12px'
     };
 
     const colorIndicatorStyle: React.CSSProperties = {
@@ -102,25 +129,29 @@ const PlayerToggleCardEnhanced: React.FC<PlayerToggleCardEnhancedProps> = ({
             ? `0 0 12px ${player.color}80, 0 2px 6px rgba(0, 0, 0, 0.3)`
             : '0 2px 4px rgba(0, 0, 0, 0.3)',
         transform: player.visible ? 'scale(1.1)' : 'scale(1)',
-        transition: 'all 0.3s ease'
+        transition: 'all 0.3s ease',
+        flexShrink: 0,
     };
 
     const playerNameStyle: React.CSSProperties = {
-        fontSize: '16px',
-        fontWeight: '600',
+        fontSize: isMobile ? '11px' : '16px',
+        fontWeight: isMobile ? '500' : '600',
         color: player.visible ? '#f3f4f6' : '#9ca3af',
-        transition: 'color 0.3s ease'
+        transition: 'color 0.3s ease',
+        overflow: 'hidden',
+        maxWidth: '200px',
+        lineHeight: 1,
     };
 
     const toggleIndicatorStyle: React.CSSProperties = {
         position: 'absolute' as const,
-        top: '12px',
-        right: '12px',
-        width: '12px',
-        height: '12px',
+        top: isMobile ? '6px' : '12px',
+        right: isMobile ? '6px' : '12px',
+        width: isMobile ? '8px' : '12px',
+        height: isMobile ? '8px' : '12px',
         borderRadius: '50%',
         backgroundColor: player.visible ? '#10b981' : '#374151',
-        border: '2px solid white',
+        border: isMobile ? '1px solid white' : '2px solid white',
         transition: 'all 0.3s ease'
     };
 

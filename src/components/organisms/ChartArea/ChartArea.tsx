@@ -2,6 +2,7 @@
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { ChartDataPoint, PlayerConfig } from "../../../types";
 import { CustomTooltip } from "../../molecules";
+import { useEffect, useState } from "react";
 
 export interface ChartAreaProps {
     chartData: ChartDataPoint[];
@@ -16,15 +17,70 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
             <stop offset="100%" stopColor={player.gradientColor} stopOpacity={0.4} />
         </linearGradient>
     ));
+    // 画面サイズを検知
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
-    // カスタムレジェンド
+    // X軸の間隔を動的に設定
+    const getXAxisInterval = () => {
+        const dataLength = chartData.length;
+        if (isMobile) {
+            // モバイルではより積極的に間引く
+            if (dataLength <= 5) return 0;
+            if (dataLength <= 10) return 2;
+            return Math.ceil(dataLength / 5);
+        }
+        // デスクトップ用
+        if (dataLength <= 7) return 0;
+        if (dataLength <= 14) return 1;
+        if (dataLength <= 30) return Math.ceil(dataLength / 15);
+        return Math.ceil(dataLength / 10);
+    };
+
+    // 日付フォーマット
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return isMobile 
+            ? `${date.getMonth() + 1}/${date.getDate()}`  // モバイル: MM/DD
+            : dateStr;  // デスクトップ: そのまま
+    };
+
+    // コンテナスタイル（モバイル対応）
+    const containerStyle: React.CSSProperties = {
+        background: 'linear-gradient(135deg, rgba(30, 20, 60, 0.95) 0%, rgba(50, 30, 80, 0.9) 50%, rgba(70, 40, 100, 0.85) 100%)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        padding: isMobile ? '16px' : '32px',  // モバイルではパディングを減らす
+        borderRadius: '24px',
+        border: '1px solid rgba(147, 51, 234, 0.2)',
+        boxShadow: `
+            0 25px 50px -12px rgba(0, 0, 0, 0.6),
+            0 10px 20px -5px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05)
+        `,
+        position: 'relative' as const,
+        overflow: 'hidden',
+        width: '100%',  // 幅を100%に
+        boxSizing: 'border-box' as const,  // パディングを含めたサイズ計算
+    };
+
+    // カスタムレジェンド（モバイル対応）
     const CustomLegend = ({ payload }: any) => (
         <div style={{
             display: 'flex',
             justifyContent: 'center',
-            gap: '24px',
+            gap: isMobile ? '12px' : '24px',
             flexWrap: 'wrap',
-            marginTop: '16px'
+            marginTop: isMobile ? '8px' : '16px',
+            padding: isMobile ? '0 8px' : '0',
         }}>
             {payload?.map((entry: any, index: number) => {
                 const player = players.find(p => p.name === entry.value);
@@ -37,26 +93,32 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                             display: 'flex',
                             alignItems: 'center',
                             gap: '8px',
-                            padding: '6px 12px',
+                            padding: isMobile ? '4px 8px' : '6px 12px',
                             backgroundColor: 'rgba(255, 255, 255, 0.1)',
                             borderRadius: '12px',
                             backdropFilter: 'blur(4px)',
-                            border: `1px solid ${player.color}40`
+                            border: `1px solid ${player.color}40`,
+                            fontSize: isMobile ? '12px' : '14px',  // モバイルでフォントサイズ調整
+                            maxWidth: isMobile ? '100%' : 'none',  // モバイルで幅制限
                         }}
                     >
                         <div
                             style={{
-                                width: '12px',
-                                height: '12px',
+                                width: isMobile ? '10px' : '12px',
+                                height: isMobile ? '10px' : '12px',
                                 borderRadius: '50%',
                                 background: `linear-gradient(45deg, ${player.color}, ${player.gradientColor})`,
-                                boxShadow: `0 2px 6px ${player.color}60`
+                                boxShadow: `0 2px 6px ${player.color}60`,
+                                flexShrink: 0,
                             }}
                         />
                         <span style={{
                             color: '#e5e7eb',
-                            fontSize: '14px',
-                            fontWeight: '500'
+                            fontSize: isMobile ? '12px' : '14px',
+                            fontWeight: '500',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
                         }}>
                             {entry.value}
                         </span>
@@ -65,22 +127,6 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
             })}
         </div>
     );
-
-    const containerStyle: React.CSSProperties = {
-        background: 'linear-gradient(135deg, rgba(30, 20, 60, 0.95) 0%, rgba(50, 30, 80, 0.9) 50%, rgba(70, 40, 100, 0.85) 100%)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)', // Safari対応
-        padding: '32px',
-        borderRadius: '24px',
-        border: '1px solid rgba(147, 51, 234, 0.2)',
-        boxShadow: `
-            0 25px 50px -12px rgba(0, 0, 0, 0.6),
-            0 10px 20px -5px rgba(0, 0, 0, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05)
-        `,
-        position: 'relative' as const,
-        overflow: 'hidden'
-    };
 
     // アニメーション付きグラデーション背景
     const backgroundOverlayStyle: React.CSSProperties = {
@@ -97,22 +143,6 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
         animation: 'gradientShift 12s ease-in-out infinite alternate',
         pointerEvents: 'none' as const,
         zIndex: 0
-    };
-
-    // 日付フォーマット関数（オプション）
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return `${date.getMonth() + 1}/${date.getDate()}`;  // MM/DD形式
-    };
-
-    // ChartAreaコンポーネント内で間隔を計算
-    const getXAxisInterval = () => {
-        const dataLength = chartData.length;
-        if (dataLength <= 7) return 0;        // 7個以下なら全て表示
-        if (dataLength <= 14) return 1;       // 14個以下なら1つおきに表示
-        if (dataLength <= 30) return 2;       // 30個以下なら2つおきに表示
-        if (dataLength <= 60) return 4;       // 60個以下なら4つおきに表示
-        return Math.floor(dataLength / 10);   // それ以上は10個程度に間引く
     };
 
     // チャートの最小高さを設定（ラベルの行数に応じて調整）
@@ -183,15 +213,32 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                 .recharts-tooltip-wrapper {
                     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
                 }
+
+                @media (max-width: 768px) {
+                    .recharts-wrapper {
+                        font-size: 10px !important;
+                    }
+                    
+                    .recharts-cartesian-axis-tick-value {
+                        font-size: 10px !important;
+                    }
+                    
+                    .recharts-label {
+                        font-size: 12px !important;
+                    }
+                }
             `}</style>
             
             <div style={containerStyle}>
                 <div style={backgroundOverlayStyle} />
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <ResponsiveContainer width="100%" height={getChartHeight()}>
+                    <ResponsiveContainer width="100%" minHeight={getChartHeight()}>
                         <LineChart 
                             data={chartData} 
-                            margin={{ top: 20, right: 120, left: 20, bottom: 60 }}
+                            margin={isMobile 
+                                ? { top: 10, right: 20, left: 10, bottom: 80 }
+                                : { top: 20, right: 80, left: 20, bottom: 60 }
+                            }
                             syncId="chart"
                         >
                             <defs>
@@ -240,7 +287,8 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                                 axisLine={false}
                                 type="number"
                                 domain={[0, 'dataMax + 50']}
-                                label={{
+                                width={isMobile ? 40 : 60}  // モバイルで幅を調整
+                                label={isMobile ? undefined : {  // モバイルではラベルを非表示
                                     value: 'ポイント',
                                     angle: -90,
                                     position: 'insideLeft',
@@ -284,7 +332,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                                         type="monotone"
                                         dataKey={player.id}
                                         stroke={`url(#gradient-${player.id})`}
-                                        strokeWidth={3}
+                                        strokeWidth={isMobile ? 2 : 3}  // モバイルで線を細く
                                         className="chart-line-path"
                                         dot={false}
                                         activeDot={{  // ホバー時のみドットを表示

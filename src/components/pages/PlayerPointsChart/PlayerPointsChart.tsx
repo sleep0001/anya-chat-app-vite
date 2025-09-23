@@ -27,6 +27,18 @@ const PlayerPointsChart: React.FC = () => {
     // APIデータを型安全にキャスト
     const typedApiData = apiData as unknown as ApiDataType;
 
+    // 画面サイズを検知
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     // 期間オプションの生成
     const periodOptions: PeriodOption[] = useMemo(() => {
         if (!typedApiData || Object.keys(typedApiData).length === 0) return [];
@@ -208,8 +220,9 @@ const PlayerPointsChart: React.FC = () => {
         minHeight: '100vh',
         position: 'relative' as const,
         overflow: 'hidden',
-        borderRadius: '20px',
-        margin: '8px',
+        padding: isMobile ? '8px' : '0',
+        margin: isMobile ? '4px' : '8px',
+        borderRadius: isMobile ? '12px' : '20px',
         boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
     };
 
