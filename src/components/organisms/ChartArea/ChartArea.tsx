@@ -99,6 +99,22 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
         zIndex: 0
     };
 
+    // 日付フォーマット関数（オプション）
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return `${date.getMonth() + 1}/${date.getDate()}`;  // MM/DD形式
+    };
+
+    // ChartAreaコンポーネント内で間隔を計算
+    const getXAxisInterval = () => {
+        const dataLength = chartData.length;
+        if (dataLength <= 7) return 0;        // 7個以下なら全て表示
+        if (dataLength <= 14) return 1;       // 14個以下なら1つおきに表示
+        if (dataLength <= 30) return 2;       // 30個以下なら2つおきに表示
+        if (dataLength <= 60) return 4;       // 60個以下なら4つおきに表示
+        return Math.floor(dataLength / 10);   // それ以上は10個程度に間引く
+    };
+
     return (
         <>
             <style>{`
@@ -196,11 +212,12 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                                 tickLine={false}
                                 axisLine={false}
                                 type="category"
-                                interval={0}
                                 angle={-45}
                                 textAnchor="end"
                                 height={60}
                                 allowDuplicatedCategory={false}
+                                tickFormatter={formatDate}
+                                interval={getXAxisInterval()}
                             />
                             
                             <YAxis
@@ -213,7 +230,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                                 tickLine={false}
                                 axisLine={false}
                                 type="number"
-                                domain={['dataMin - 50', 'dataMax + 50']}
+                                domain={[0, 'dataMax + 50']}
                                 label={{
                                     value: 'ポイント',
                                     angle: -90,
@@ -260,14 +277,13 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                                         stroke={`url(#gradient-${player.id})`}
                                         strokeWidth={3}
                                         className="chart-line-path"
-                                        dot={{
-                                            r: 4,
+                                        dot={false}
+                                        activeDot={{  // ホバー時のみドットを表示
+                                            r: 2,
                                             fill: player.color,
-                                            stroke: '#1f2937',
+                                            stroke: '#ffffff',
                                             strokeWidth: 1,
-                                            className: 'chart-dot-default'
                                         }}
-                                        activeDot={true}
                                         name={player.name}
                                         connectNulls={true}
                                         isAnimationActive={true}
