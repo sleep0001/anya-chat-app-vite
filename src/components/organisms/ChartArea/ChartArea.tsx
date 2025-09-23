@@ -115,6 +115,15 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
         return Math.floor(dataLength / 10);   // それ以上は10個程度に間引く
     };
 
+    // チャートの最小高さを設定（ラベルの行数に応じて調整）
+    const getChartHeight = () => {
+        const visiblePlayerCount = players.filter(p => p.visible).length;
+        const legendRows = Math.ceil(visiblePlayerCount / 4); // 1行に4つのラベルと仮定
+        const baseHeight = 400; // グラフ本体の基本高さ
+        const legendHeight = legendRows * 40; // 各行40pxと仮定
+        const marginHeight = 100; // 上下のマージン
+        return baseHeight + legendHeight + marginHeight;
+    };
     return (
         <>
             <style>{`
@@ -179,7 +188,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
             <div style={containerStyle}>
                 <div style={backgroundOverlayStyle} />
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <ResponsiveContainer width="100%" height={500}>
+                    <ResponsiveContainer width="100%" height={getChartHeight()}>
                         <LineChart 
                             data={chartData} 
                             margin={{ top: 20, right: 120, left: 20, bottom: 60 }}

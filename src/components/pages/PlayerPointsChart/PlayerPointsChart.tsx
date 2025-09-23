@@ -74,7 +74,7 @@ const PlayerPointsChart: React.FC = () => {
             { color: '#ff9a9e', gradientColor: '#fecfef' },
         ];
 
-        const topN = 10; // 上位10名を表示
+        const topN = 20; // 上位10名を表示
         const allPlayers: Array<{
             playerId: string;
             playerData: PlayerPointData;
