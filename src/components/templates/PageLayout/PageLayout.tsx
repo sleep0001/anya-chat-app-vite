@@ -39,7 +39,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
     backgroundImage = "/assets/background_image.png",
     backgroundColor = '#f3e4e7',
     themeColor = '#f4b3bb',
-    maxContentWidth = '80%',
+    maxContentWidth = '95%',
     contentBackgroundColor = 'rgba(243, 228, 231, 0.85)',
     contentPadding = '20px 0 30px',
     style,
