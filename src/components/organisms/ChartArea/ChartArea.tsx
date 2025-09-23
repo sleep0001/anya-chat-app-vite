@@ -2,7 +2,7 @@
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { ChartDataPoint, PlayerConfig } from "../../../types";
 import { CustomTooltip } from "../../molecules";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface ChartAreaProps {
     chartData: ChartDataPoint[];
@@ -146,14 +146,29 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
     };
 
     // チャートの最小高さを設定（ラベルの行数に応じて調整）
-    const getChartHeight = () => {
+    const chartHeight = useMemo(() => {
         const visiblePlayerCount = players.filter(p => p.visible).length;
-        const legendRows = Math.ceil(visiblePlayerCount / 4); // 1行に4つのラベルと仮定
-        const baseHeight = 400; // グラフ本体の基本高さ
-        const legendHeight = legendRows * 40; // 各行40pxと仮定
-        const marginHeight = 100; // 上下のマージン
-        return baseHeight + legendHeight + marginHeight;
-    };
+        
+        // モバイルとデスクトップで異なる計算
+        if (isMobile) {
+            // モバイル: より小さいレジェンドサイズと基本高さ
+            const legendItemsPerRow = 2; // モバイルでは1行に2つ
+            const legendRows = Math.ceil(visiblePlayerCount / legendItemsPerRow);
+            const baseHeight = 400; // モバイル用基本高さ
+            const legendHeight = legendRows * 35; // 各行35px
+            const marginHeight = 80; // モバイル用マージン
+            return baseHeight + legendHeight + marginHeight;
+        } else {
+            // デスクトップ: 元の計算
+            const legendItemsPerRow = 4; // デスクトップでは1行に4つ
+            const legendRows = Math.ceil(visiblePlayerCount / legendItemsPerRow);
+            const baseHeight = 400; // グラフ本体の基本高さ
+            const legendHeight = legendRows * 40; // 各行40px
+            const marginHeight = 100; // 上下のマージン
+            return baseHeight + legendHeight + marginHeight;
+        }
+    }, [players, isMobile]); // playersとisMobileの変化を監視
+
     return (
         <>
             <style>{`
@@ -232,11 +247,11 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
             <div style={containerStyle}>
                 <div style={backgroundOverlayStyle} />
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <ResponsiveContainer width="100%" minHeight={getChartHeight()}>
+                    <ResponsiveContainer width="100%" height={chartHeight}>
                         <LineChart 
                             data={chartData} 
                             margin={isMobile 
-                                ? { top: 10, right: 20, left: 10, bottom: 80 }
+                                ? { top: 10, right: 20, left: 10, bottom: 10 }
                                 : { top: 20, right: 80, left: 20, bottom: 60 }
                             }
                             syncId="chart"
@@ -320,7 +335,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({ chartData, players }) => {
                             <Legend 
                                 content={<CustomLegend />}
                                 wrapperStyle={{
-                                    paddingTop: '20px'
+                                    paddingTop: '20px',
                                 }}
                             />
 
