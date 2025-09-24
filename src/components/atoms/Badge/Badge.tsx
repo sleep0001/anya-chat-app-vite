@@ -5,7 +5,8 @@ export interface BadgeProps {
     /** バッジの内容 */
     children?: React.ReactNode;
     /** バッジの種類 */
-    variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info' | 'positive';
+    variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info' | 'positive' | 
+                'new' | 'improved' | 'fixed' | 'deprecated' | 'security' | 'breaking' | 'feature' | 'bugfix';
     /** サイズ */
     size?: 'small' | 'medium' | 'large';
     /** ドット表示（数値の代わりに） */
@@ -30,7 +31,7 @@ export interface BadgeProps {
     className?: string;
 }
 
-const Badge: React.FC<BadgeProps> = ({
+export const Badge: React.FC<BadgeProps> = ({
     children,
     variant = 'default',
     size = 'medium',
@@ -45,9 +46,10 @@ const Badge: React.FC<BadgeProps> = ({
     style = {},
     className,
 }) => {
-    // バリエーション別カラー
+    // バリエーション別カラー（既存 + リリースノート用を追加）
     const getVariantColor = (variant: string) => {
         const colorMap = {
+            // 既存のカラー
             default: '#d9d9d9',
             primary: '#1890ff',
             success: '#52c41a',
@@ -55,6 +57,15 @@ const Badge: React.FC<BadgeProps> = ({
             error: '#ff4d4f',
             info: '#13c2c2',
             positive: '#ffaa00ff',
+            // リリースノート用のカラー
+            new: '#10b981',
+            improved: '#3b82f6',
+            fixed: '#8b5cf6',
+            deprecated: '#f59e0b',
+            security: '#ef4444',
+            breaking: '#dc2626',
+            feature: '#10b981',
+            bugfix: '#8b5cf6',
         };
         return color || colorMap[variant as keyof typeof colorMap] || colorMap.default;
     };
@@ -69,8 +80,11 @@ const Badge: React.FC<BadgeProps> = ({
         return sizeMap[size as keyof typeof sizeMap] || sizeMap.medium;
     };
 
+    // リリースノート用バリアントかチェック
+    const isReleaseNoteVariant = ['new', 'improved', 'fixed', 'deprecated', 'security', 'breaking', 'feature', 'bugfix'].includes(variant);
+
     // 数値バッジの場合（子要素がある場合）
-    if (children && (count !== undefined || dot)) {
+    if (children && (count !== undefined || dot) && !isReleaseNoteVariant) {
         return (
             <AntdBadge
                 count={count}
@@ -80,7 +94,7 @@ const Badge: React.FC<BadgeProps> = ({
                 color={getVariantColor(variant)}
                 style={{ 
                     cursor: clickable ? 'pointer' : 'default',
-                    ...style // カスタムスタイルを適用
+                    ...style
                 }}
                 className={className}
                 onClick={clickable ? onClick : undefined}
@@ -102,6 +116,12 @@ const Badge: React.FC<BadgeProps> = ({
         borderRadius: '12px',
         cursor: clickable ? 'pointer' : 'default',
         margin: 0,
+        // リリースノート用の追加スタイル
+        ...(isReleaseNoteVariant && {
+            fontWeight: 600,
+            textTransform: 'uppercase' as const,
+            borderRadius: '4px',
+        }),
         ...style, // カスタムスタイルを最後に適用（オーバーライド）
     };
 

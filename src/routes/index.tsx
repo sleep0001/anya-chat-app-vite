@@ -12,7 +12,8 @@ import {
     ErrorBoundary,
     SeaTreeEventAdmin,
     PreviewToolRelease,
-    PlayerPointsChart
+    PlayerPointsChart,
+    ReleaseNotes
 } from '../components';
 
 const ChatRoomPage = lazy(() => import('../components/pages/ChatRoomPage/ChatRoomPage'));
@@ -36,6 +37,7 @@ export default function AppRoutes() {
                         <Route path='/seatrees' element={<SeaTreesPage />} />
                         <Route path='/seatrees/admin' element={<SeaTreeEventAdmin />} />
                         <Route path='/chart' element={<PlayerPointsChart />} />
+                        <Route path='/release' element={<ReleaseNotes />} />
                     </Route>
                 </Routes>
             </Layout>

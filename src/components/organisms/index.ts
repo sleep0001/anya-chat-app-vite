@@ -28,3 +28,9 @@ export type { PlayerSelectionPanelProps } from './PlayerSelectionPanel/PlayerSel
 
 export { default as StatsPanel } from './StatsPanel/StatsPanel';
 export type { StatsPanelProps } from './StatsPanel/StatsPanel';
+
+export { default as ReleaseNote } from './ReleaseNote/ReleaseNote';
+export type { ReleaseNoteProps } from './ReleaseNote/ReleaseNote';
+
+export { default as ReleaseNotesList } from './ReleaseNotesList/ReleaseNotesList';
+export type { ReleaseNotesListProps } from './ReleaseNotesList/ReleaseNotesList';

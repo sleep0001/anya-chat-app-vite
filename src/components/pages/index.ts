@@ -20,3 +20,5 @@ export { default as SeaTreeEventAdmin } from './SeaTreeEventAdmin/SeaTreeEventAd
 export { default as PreviewToolRelease } from './PreviewToolRelease/PreviewToolRelease';
 
 export { default as PlayerPointsChart } from './PlayerPointsChart/PlayerPointsChart';
+
+export { default as ReleaseNotes } from './ReleaseNotes/ReleaseNotes';

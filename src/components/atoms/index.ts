@@ -33,3 +33,12 @@ export type { ColorIndicatorProps } from './ColorIndicator/ColorIndicator.tsx';
 
 export { default as StatCardValue } from './StatCardValue/StatCardValue.tsx'
 export type { StatCardValueProps } from './StatCardValue/StatCardValue.tsx';
+
+export { default as ChangeIcon } from './ChangeIcon/ChangeIcon.tsx'
+export type { ChangeIconProps, ChangeType } from './ChangeIcon/ChangeIcon.tsx';
+
+export { default as ReleaseDate } from './ReleaseDate/ReleaseDate.tsx'
+export type { ReleaseDateProps } from './ReleaseDate/ReleaseDate.tsx';
+
+export { default as VersionNumber } from './VersionNumber/VersionNumber.tsx'
+export type { VersionNumberProps } from './VersionNumber/VersionNumber.tsx';

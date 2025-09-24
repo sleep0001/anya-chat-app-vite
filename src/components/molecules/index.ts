@@ -26,3 +26,12 @@ export type { PlayerToggleCardProps } from './PlayerToggleCard/PlayerToggleCard'
 
 export { default as StatCard } from './StatCard/StatCard';
 export type { StatCardProps } from './StatCard/StatCard';
+
+export { default as ChangeGroup } from './ChangeGroup/ChangeGroup';
+export type { ChangeGroupProps } from './ChangeGroup/ChangeGroup';
+
+export { default as ChangeItem } from './ChangeItem/ChangeItem';
+export type { ChangeItemProps } from './ChangeItem/ChangeItem';
+
+export { default as ReleaseHeader } from './ReleaseHeader/ReleaseHeader';
+export type { ReleaseHeaderProps } from './ReleaseHeader/ReleaseHeader';
