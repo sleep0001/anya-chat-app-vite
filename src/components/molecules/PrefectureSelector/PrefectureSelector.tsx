@@ -41,7 +41,6 @@ const PrefectureSelector: React.FC<PrefectureSelectorProps> = ({
             placeholder="都道府県を選択"
             allowClear={true}
             clearLabel="全国"
-            searchable={true}
             width={200}
             required={required}
             error={error}

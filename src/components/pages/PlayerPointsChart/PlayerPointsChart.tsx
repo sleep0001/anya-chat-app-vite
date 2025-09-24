@@ -296,7 +296,6 @@ const PlayerPointsChart: React.FC = () => {
                                 label: option.label
                             }))}
                             placeholder="期間を選択"
-                            searchable={true}
                             width={300}
                         />
 
