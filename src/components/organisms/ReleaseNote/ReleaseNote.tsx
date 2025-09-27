@@ -17,6 +17,21 @@ export interface ReleaseNoteProps {
     collapsible?: boolean;
 }
 
+function isWithinOneWeek(targetDate: Date | string): boolean {
+    const target = typeof targetDate === 'string' ? new Date(targetDate) : new Date(targetDate);
+    const today = new Date();
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(today.getDate() - 7);
+
+    // 時間を0時0分0秒にリセット（日付のみで比較）
+    today.setHours(0, 0, 0, 0);
+    target.setHours(0, 0, 0, 0);
+    oneWeekAgo.setHours(0, 0, 0, 0);
+
+    // 1週間前から今日までの範囲内かチェック
+    return target >= oneWeekAgo && target <= today;
+}
+
 const ReleaseNote: React.FC<ReleaseNoteProps> = ({
     version,
     date,
@@ -54,6 +69,11 @@ const ReleaseNote: React.FC<ReleaseNoteProps> = ({
 
     const activeSections = sections.filter((section) => section.changes.length > 0);
 
+    // 1週間以内のリリースにnewバッチを追加する。
+    const badgesNew: ReleaseHeaderProps['badges'] = isWithinOneWeek(date)
+        ? [...badges, { variant: 'new', label: 'New' }]
+        : badges;
+
     return (
         <article
             style={{
@@ -68,7 +88,7 @@ const ReleaseNote: React.FC<ReleaseNoteProps> = ({
                 version={version}
                 date={date}
                 title={title}
-                badges={badges}
+                badges={badgesNew}
             />
 
             {summary && (
