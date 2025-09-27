@@ -27,7 +27,7 @@ const ReleaseNotesList: React.FC<ReleaseNotesListProps> = ({
         const matchesFilter = filterType === 'all' || 
             (filterType === 'major' && release.version.endsWith('.0.0')) ||
             (filterType === 'minor' && !release.version.endsWith('.0.0') && release.version.includes('.0')) ||
-            (filterType === 'patch' && !release.version.includes('.0'));
+            (filterType === 'micro' && !release.version.includes('.0'));
 
         return matchesSearch && matchesFilter;
     });
@@ -82,7 +82,7 @@ const ReleaseNotesList: React.FC<ReleaseNotesListProps> = ({
                                 <option value="all">すべてのリリース</option>
                                 <option value="major">メジャーリリース</option>
                                 <option value="minor">マイナーリリース</option>
-                                <option value="patch">パッチリリース</option>
+                                <option value="micro">マイクロリリース</option>
                             </select>
                         )}
                     </div>
