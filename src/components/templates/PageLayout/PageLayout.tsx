@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Navigation, Footer, NavigationItem, FooterLink } from '../../organisms';
+import { releaseVersion } from '../../pages/ReleaseNotes/ReleaseNotes';
 
 export interface PageLayoutProps {
     /** ナビゲーション設定 */
@@ -155,7 +156,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({
                     organizationName="a-nya developer alliance"
                     backgroundColor={themeColor}
                     textColor="#402B28"
-                    version="v1.4.0"
+                    version={releaseVersion()}
                     links={footerLinks}
                     height="10vh"
                     style={{ margin: 0 }} // 明示的にマージンをリセット
