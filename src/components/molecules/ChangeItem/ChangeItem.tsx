@@ -62,6 +62,8 @@ const ChangeItem: React.FC<ChangeItemProps> = ({
                             fontSize: '14px',
                             color: '#6b7280',
                             lineHeight: 1.5,
+                            whiteSpace: 'pre-wrap',  // ← これを追加
+                            wordBreak: 'break-word', // ← 長い単語の折り返し対応
                         }}
                     >
                         {details}
