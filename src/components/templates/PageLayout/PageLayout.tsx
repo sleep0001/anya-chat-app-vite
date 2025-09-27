@@ -34,10 +34,11 @@ const PageLayout: React.FC<PageLayoutProps> = ({
         { key: '3', label: 'アニャマス県ランキング', path: '/dm', },
         { key: '4', label: '樹海CS', path: '/seatrees', },
         { key: '5', label: 'ポイント遷移', path: '/chart', },
+        { key: '6', label: 'リリースノート', path: '/release', },
         // { key: '5', label: 'ワンピ検索', path: '/card', },
     ],
     footerLinks = [],
-    hideFooterOnPaths = ['/room'],
+    hideFooterOnPaths = ['/room'], // フッターを表示しないページを指定できる。
     backgroundImage = "/assets/background_image.png",
     backgroundColor = '#f3e4e7',
     themeColor = '#f4b3bb',
