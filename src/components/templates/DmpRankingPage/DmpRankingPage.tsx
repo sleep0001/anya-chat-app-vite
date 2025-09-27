@@ -3,6 +3,7 @@ import { RankingTable, RankingPlayer } from '../../organisms';
 import { Text } from '../../atoms';
 import { useDmPlayerStats } from '../../../hooks/useDmPlayerStats';
 import { DmPlayerStats } from '../../../types/DmPlayerStats';
+import { FlourishBarChart } from '../../molecules';
 
 const DmpRankingPage: React.FC = () => {
     const { players, loading, error } = useDmPlayerStats();
@@ -61,6 +62,7 @@ const DmpRankingPage: React.FC = () => {
                 maxItems={100}
                 themeColor="#f8bbd0"
             />
+            <FlourishBarChart />
         </div>
     );
 };

@@ -35,3 +35,5 @@ export type { ChangeItemProps } from './ChangeItem/ChangeItem';
 
 export { default as ReleaseHeader } from './ReleaseHeader/ReleaseHeader';
 export type { ReleaseHeaderProps } from './ReleaseHeader/ReleaseHeader';
+
+export { default as FlourishBarChart } from './FlourishBarChart/FlourishBarChart';
