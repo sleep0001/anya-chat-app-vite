@@ -6,7 +6,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.6.0',
         date: '2025-09-27',
         title: 'ChartRaceを追加',
-        badges: [],
         summary: 'このリリースでは、新しいコンポーネントが導入されています。',
         features: [
             {
@@ -19,10 +18,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.5.0',
         date: '2025-09-23',
         title: 'ポイントグラフを追加',
-        badges: [
-            { variant: 'feature', label: 'feature' },
-            { variant: 'improved', label: 'improved' },
-        ],
         summary: 'このリリースでは、新しいコンポーネントが導入されています。また、レスポンスの改善を行いました。',
         features: [
             {
@@ -45,9 +40,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.4.0',
         date: '2025-09-20',
         title: '樹海CSランキングを追加',
-        badges: [
-            { variant: 'feature', label: 'feature' },
-        ],
         summary: 'このリリースでは、新しいコンポーネントが導入されています。',
         features: [
             {
@@ -64,9 +56,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.3.3',
         date: '2025-09-15',
         title: 'ランキングシーズンの絞り込みを追加',
-        badges: [
-            { variant: 'improved', label: 'improved' },
-        ],
         summary: 'このリリースでは、機能改善が行われました。',
         improvements: [
             {
@@ -79,9 +68,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.3.2',
         date: '2025-09-10',
         title: '集計バグの修正',
-        badges: [
-            { variant: 'bugfix', label: 'bugfix' },
-        ],
         summary: 'このリリースでは、バグ修正が行われました。',
         bugfixes: [
             {
@@ -94,9 +80,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.3.1',
         date: '2025-07-12',
         title: '全国順位を表示',
-        badges: [
-            { variant: 'improved', label: 'improved' },
-        ],
         summary: 'このリリースでは、機能改善が行われました。また、連携機能が追加されました。',
         improvements: [
             {
@@ -113,9 +96,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.3.0',
         date: '2025-07-08',
         title: '全国ランキング',
-        badges: [
-            { variant: 'feature', label: 'feature' },
-        ],
         summary: 'このリリースでは、新しいコンポーネントが追加されています。',
         features: [
             {
@@ -128,9 +108,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.2.0',
         date: '2025-07-05',
         title: 'アニャマス県ランキング',
-        badges: [
-            { variant: 'feature', label: 'feature' },
-        ],
         summary: 'このリリースでは、新しいコンポーネントが追加されています。',
         features: [
             {
@@ -143,9 +120,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.1.0',
         date: '2025-05-31',
         title: 'ワンピースカード検索（現廃止）',
-        badges: [
-            { variant: 'feature', label: 'feature' },
-        ],
         summary: 'このリリースでは、新しいコンポーネントが追加されています。',
         features: [
             {
@@ -158,9 +132,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.0.1',
         date: '2025-05-13',
         title: 'ルームに関するバグ修正',
-        badges: [
-            { variant: 'bugfix', label: 'bugfix' },
-        ],
         summary: 'このリリースでは、バグ修正が行われました。',
         bugfixes: [
             {
@@ -173,9 +144,6 @@ const releases: ReleaseNoteProps[] = [
         version: '1.0.0',
         date: '2025-05-01',
         title: 'チャット機能',
-        badges: [
-            { variant: 'feature', label: 'feature' },
-        ],
         summary: 'このリリースが最初のリリースです。',
         features: [
             {

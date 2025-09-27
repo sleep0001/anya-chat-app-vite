@@ -69,10 +69,32 @@ const ReleaseNote: React.FC<ReleaseNoteProps> = ({
 
     const activeSections = sections.filter((section) => section.changes.length > 0);
 
+    const autoBadges: ReleaseHeaderProps['badges'] = badges;
+
     // 1週間以内のリリースにnewバッチを追加する。
-    const badgesNew: ReleaseHeaderProps['badges'] = isWithinOneWeek(date)
-        ? [...badges, { variant: 'new', label: 'New' }]
-        : badges;
+    if(isWithinOneWeek(date)) {
+        autoBadges.push({ variant: 'new', label: 'New' })
+    }
+
+    // 含まれるセクションに応じてバッチを追加する。
+    if (features && features.length > 0) {
+        autoBadges.push({ variant: 'feature', label: 'Feature' });
+    }
+    if (improvements && improvements.length > 0) {
+        autoBadges.push({ variant: 'improved', label: 'Improved' });
+    }
+    if (bugfixes && bugfixes.length > 0) {
+        autoBadges.push({ variant: 'bugfix', label: 'Bugfix' });
+    }
+    if (security && security.length > 0) {
+        autoBadges.push({ variant: 'security', label: 'Security' });
+    }
+    if (breaking && breaking.length > 0) {
+        autoBadges.push({ variant: 'breaking', label: 'Breaking' });
+    }
+    if (deprecated && deprecated.length > 0) {
+        autoBadges.push({ variant: 'deprecated', label: 'Deprecated' });
+    }
 
     return (
         <article
@@ -88,7 +110,7 @@ const ReleaseNote: React.FC<ReleaseNoteProps> = ({
                 version={version}
                 date={date}
                 title={title}
-                badges={badgesNew}
+                badges={autoBadges}
             />
 
             {summary && (
