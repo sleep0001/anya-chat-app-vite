@@ -64,7 +64,7 @@ export const Badge: React.FC<BadgeProps> = ({
             deprecated: '#f59e0b',
             security: '#ef4444',
             breaking: '#dc2626',
-            feature: '#10b981',
+            feature: '#00ccffff',
             bugfix: '#8b5cf6',
         };
         return color || colorMap[variant as keyof typeof colorMap] || colorMap.default;
